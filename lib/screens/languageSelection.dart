@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LanguageSelectionScreen extends StatelessWidget {
+  const LanguageSelectionScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
