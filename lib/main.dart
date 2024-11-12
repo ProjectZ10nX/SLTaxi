@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mrdrop/screens/languageSelection.dart';
+import 'package:mrdrop/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(), // Set HomePage as the initial screen
     );
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,8 +40,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => LanguageSelectionScreen()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             },
             child: const Text("Go"),
