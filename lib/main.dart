@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/home_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mrdrop/screens/ProfileCreate.dart';
 import 'package:mrdrop/screens/languageSelection.dart';
-import 'package:mrdrop/screens/home_screen.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-       localizationsDelegates: [
+      localizationsDelegates: [
         // AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -23,7 +22,6 @@ class MyApp extends StatelessWidget {
       supportedLocales: [
         Locale('en', ''), // English
       ],
-
       debugShowCheckedModeBanner: false,
       home: HomePage(), // Set HomePage as the initial screen
     );
@@ -52,9 +50,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-
                 MaterialPageRoute(builder: (context) => const HomeScreen()),
-
               );
             },
             child: const Text("Go"),
