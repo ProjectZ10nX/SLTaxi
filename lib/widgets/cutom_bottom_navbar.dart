@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/account_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   // ignore: use_super_parameters
@@ -53,7 +54,13 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AccountScreen()),
+                );
+              },
               child: Image.asset(
                 'assets/Account.png',
                 width: 34,

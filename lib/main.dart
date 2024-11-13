@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mrdrop/screens/languageSelection.dart';
 import 'package:mrdrop/screens/home_screen.dart';
 
 void main() {
