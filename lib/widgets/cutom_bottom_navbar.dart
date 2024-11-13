@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mrdrop/screens/account_screen.dart';
+import 'package:mrdrop/screens/home_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   // ignore: use_super_parameters
@@ -30,7 +31,12 @@ class CustomBottomNavBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              },
               child: Image.asset(
                 'assets/Home.png',
                 width: 34,
