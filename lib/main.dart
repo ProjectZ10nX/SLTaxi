@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mrdrop/screens/ProfileCreate.dart';
+import 'package:mrdrop/screens/EmailVerification.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfileCreatePage()),
+                MaterialPageRoute(builder: (context) => EmailVerification()),
               );
             },
             child: const Text("Go"),
