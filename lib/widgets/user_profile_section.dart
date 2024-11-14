@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/profile_Screen.dart';
 
 class UserProfileSection extends StatefulWidget {
   const UserProfileSection({super.key});
@@ -30,18 +31,32 @@ class _UserProfileSectionState extends State<UserProfileSection> {
             ),
           ),
           const SizedBox(width: 15),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'first second name',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
-              )
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.black,
+                ),
+              ),
             ],
           )
         ],
