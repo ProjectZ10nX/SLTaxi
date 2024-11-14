@@ -15,28 +15,30 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            UserProfileSection(),
-            SizedBox(height: 5),
-            UserProgressCard(),
-            SizedBox(height: 10),
-            DeliveryCard(),
-            SizedBox(
-              height: 20,
-            ),
-            OptionTitle(icon: Icons.card_membership, title: 'Memberships'),
-            OptionTitle(icon: Icons.help_outline, title: 'Help and Support'),
-            OptionTitle(icon: Icons.payment, title: 'Payment'),
-            OptionTitle(icon: Icons.car_rental, title: 'Earn with Mr.DROP'),
-            OptionTitle(icon: Icons.info_outline, title: 'About Us'),
-          ],
+    return const SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              UserProfileSection(),
+              SizedBox(height: 5),
+              UserProgressCard(),
+              SizedBox(height: 10),
+              DeliveryCard(),
+              SizedBox(
+                height: 20,
+              ),
+              OptionTitle(icon: Icons.card_membership, title: 'Memberships'),
+              OptionTitle(icon: Icons.help_outline, title: 'Help and Support'),
+              OptionTitle(icon: Icons.payment, title: 'Payment'),
+              OptionTitle(icon: Icons.car_rental, title: 'Earn with Mr.DROP'),
+              OptionTitle(icon: Icons.info_outline, title: 'About Us'),
+            ],
+          ),
         ),
+        bottomNavigationBar: CustomBottomNavBar(),
       ),
-      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 }
