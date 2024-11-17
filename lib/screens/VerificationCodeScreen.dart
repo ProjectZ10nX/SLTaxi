@@ -292,48 +292,48 @@ class _VerificationCodeState extends State<VerificationCode> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 150,
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () {},
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all<Color>(
+                                  const Color.fromARGB(255, 220, 204, 198)),
+                              shape: WidgetStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      12.0), // Set your desired radius here
+                                ),
+                              ),
+                            ),
                             child: const Text(
                               "Back",
                               style: TextStyle(
                                   color: Color.fromARGB(255, 0, 0, 0)),
                             ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color.fromARGB(255, 220, 204, 198)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      12.0), // Set your desired radius here
-                                ),
-                              ),
-                            ),
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 150,
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () {},
-                            child: const Text(
-                              "Next",
-                              style: TextStyle(color: Colors.white),
-                            ),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                   const Color.fromARGB(255, 189, 121, 96)),
-                              shape: MaterialStateProperty.all<
+                              shape: WidgetStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       12.0), // Set your desired radius here
                                 ),
                               ),
+                            ),
+                            child: const Text(
+                              "Next",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),

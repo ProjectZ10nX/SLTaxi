@@ -141,25 +141,25 @@ class _MobileVerificationState extends State<MobileVerification> {
                         ],
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: 200,
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {},
-                        child: const Text(
-                          "Next",
-                          style: TextStyle(color: Colors.white),
-                        ),
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color.fromARGB(255, 189, 121, 96)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   12.0), // Set your desired radius here
                             ),
                           ),
+                        ),
+                        child: const Text(
+                          "Next",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
