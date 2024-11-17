@@ -140,13 +140,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.red,
-                            side: BorderSide(color: Colors.red),
+                            side: const BorderSide(color: Colors.red),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text('Logout'),
+                          child: const Text('Logout'),
                         ),
                       ),
                     ),
@@ -164,13 +164,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 Widget _buildSectionTitle(String title) {
   return Padding(
-    padding: EdgeInsets.symmetric(
+    padding: const EdgeInsets.symmetric(
       vertical: 10.0,
       horizontal: 0.0,
     ),
     child: Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 13,
         fontWeight: FontWeight.w500,
       ),

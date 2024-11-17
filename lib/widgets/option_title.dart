@@ -6,8 +6,7 @@ class OptionTitle extends StatefulWidget {
   final VoidCallback? onTap;
 
   const OptionTitle(
-      {Key? key, required this.icon, required this.title, this.onTap})
-      : super(key: key);
+      {super.key, required this.icon, required this.title, this.onTap});
 
   @override
   State<OptionTitle> createState() => _OptionTitleState();
