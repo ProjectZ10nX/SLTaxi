@@ -7,12 +7,12 @@ class OptionTile extends StatefulWidget {
   final VoidCallback? onTap;
 
   const OptionTile({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.subtitle,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<OptionTile> createState() => _OptionTileState();
@@ -22,7 +22,7 @@ class _OptionTileState extends State<OptionTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 4.0),
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
       child: ListTile(
         leading: Icon(
           widget.icon,
@@ -30,7 +30,7 @@ class _OptionTileState extends State<OptionTile> {
         ),
         title: Text(
           widget.title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -38,13 +38,13 @@ class _OptionTileState extends State<OptionTile> {
         subtitle: widget.subtitle != null
             ? Text(
                 widget.subtitle!,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
               )
             : null,
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios_outlined,
           size: 13,
         ),

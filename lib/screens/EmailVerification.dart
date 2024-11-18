@@ -57,7 +57,7 @@ class EmailVerification extends StatelessWidget {
               ),
 
               //Got it Button
-              Container(
+              SizedBox(
                 width: 150,
                 height: 50,
                 child: ElevatedButton(

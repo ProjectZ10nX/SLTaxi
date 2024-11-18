@@ -2,7 +2,10 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+<<<<<<< HEAD
 import 'package:mrdrop/screens/MobileVerification.dart';
+=======
+>>>>>>> 0700567298addfba2d06842edae2a425cf017ff2
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -6,11 +6,11 @@ class CustomNumericKeyboard extends StatelessWidget {
   final double buttonSpacing;
 
   const CustomNumericKeyboard({
-    Key? key,
+    super.key,
     required this.onKeyPressed,
     required this.onBackspace,
     this.buttonSpacing = 8.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,7 @@ class CustomNumericKeyboard extends StatelessWidget {
     required VoidCallback onPressed,
     bool isBackspace = false,
   }) {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: Material(
@@ -105,7 +105,7 @@ class CustomNumericKeyboard extends StatelessWidget {
             ),
             child: Center(
               child: isBackspace
-                  ? Icon(Icons.backspace_outlined,
+                  ? const Icon(Icons.backspace_outlined,
                       size: 24, color: Colors.black54)
                   : Text(
                       text,

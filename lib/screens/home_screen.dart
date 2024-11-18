@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/rides_screen.dart';
 import 'package:mrdrop/widgets/card_widget.dart';
 import 'package:mrdrop/widgets/custom_card_widget.dart';
 import 'package:mrdrop/widgets/custom_card_widget2.dart';
@@ -82,22 +83,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               )),
               const SizedBox(height: 30),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CardWidget(asset: "assets/car.png", label: "Rides"),
-                  CardWidget(asset: "assets/rentals.png", label: "Rentals"),
-                  CardWidget(asset: "assets/flash.png", label: "Flash"),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RidesScreen()),
+                      );
+                    },
+                    child: const CardWidget(
+                      asset: "assets/car.png",
+                      label: "Rides",
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: const CardWidget(
+                      asset: "assets/rentals.png",
+                      label: "Rentals",
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: const CardWidget(
+                      asset: "assets/flash.png",
+                      label: "Flash",
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(
                 height: 10,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  CardWidget(asset: "assets/scan.png", label: "Scan N' Go"),
-                  CardWidget(asset: "assets/market.png", label: "Market")
+                  GestureDetector(
+                    onTap: () {},
+                    child: const CardWidget(
+                      asset: "assets/scan.png",
+                      label: "Scan N' Go",
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: const CardWidget(
+                      asset: "assets/market.png",
+                      label: "Market",
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 30),

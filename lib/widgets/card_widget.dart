@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 class CardWidget extends StatelessWidget {
   final String asset;
   final String label;
+  // final VoidCallback onPressed;
 
   // ignore: use_super_parameters
-  const CardWidget({Key? key, required this.asset, required this.label})
-      : super(key: key);
+  const CardWidget({
+    Key? key,
+    required this.asset,
+    required this.label,
+    // required this.onPressed
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +57,7 @@ class CardWidget extends StatelessWidget {
             fontWeight: FontWeight.w700,
             color: Color.fromRGBO(86, 82, 84, 1),
           ),
-        )
+        ),
       ],
     );
   }
