@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/VerificationCodeScreen.dart';
+import 'package:mrdrop/services/firebase_service.dart';
 import 'package:mrdrop/widgets/keyboard.dart';
 
 class MobileVerification extends StatefulWidget {
@@ -12,6 +14,34 @@ class _MobileVerificationState extends State<MobileVerification> {
   String _inputText = "";
   String phoneNumber = '';
   List<DropdownMenuItem<dynamic>> items = [];
+  String _selectedCountryCode = '+94';
+  bool _isLoading = false;
+
+  Future<void> _verifyPhone() async {
+    if (phoneNumberController.text.isEmpty) return;
+
+    setState(() => _isLoading = true);
+
+    await FirebaseService.verifyPhone(
+      phoneNumber: '$_selectedCountryCode${_inputText}',
+      onCodeSent: (String verificationId) {
+        setState(() => _isLoading = false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                VerificationCode(verificationId: verificationId),
+          ),
+        );
+      },
+      onError: (String error) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+    );
+  }
 
   dynamic countryChanged(dynamic value) {
     return value;
@@ -19,9 +49,12 @@ class _MobileVerificationState extends State<MobileVerification> {
 
   TextEditingController phoneNumberController = TextEditingController();
 
+  //ToDo - Keyboard is Working
+
   void _handleKeyPress(String value) {
     setState(() {
       _inputText += value;
+      phoneNumberController.text = _inputText;
     });
   }
 
@@ -29,6 +62,7 @@ class _MobileVerificationState extends State<MobileVerification> {
     setState(() {
       if (_inputText.isNotEmpty) {
         _inputText = _inputText.substring(0, _inputText.length - 1);
+        phoneNumberController.text = _inputText;
       }
     });
   }
@@ -145,7 +179,9 @@ class _MobileVerificationState extends State<MobileVerification> {
                       width: 200,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _verifyPhone();
+                        },
                         child: const Text(
                           "Next",
                           style: TextStyle(color: Colors.white),

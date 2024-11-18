@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mrdrop/widgets/keyboard.dart';
 
 class VerificationCode extends StatefulWidget {
-  const VerificationCode({super.key});
+  const VerificationCode({super.key, required String verificationId});
 
   @override
   State<VerificationCode> createState() => _VerificationCodeState();
