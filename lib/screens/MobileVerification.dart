@@ -179,17 +179,9 @@ class _MobileVerificationState extends State<MobileVerification> {
                       width: 200,
                       height: 50,
                       child: ElevatedButton(
-<<<<<<< HEAD
                         onPressed: () {
                           _verifyPhone();
                         },
-                        child: const Text(
-                          "Next",
-                          style: TextStyle(color: Colors.white),
-                        ),
-=======
-                        onPressed: () {},
->>>>>>> 0700567298addfba2d06842edae2a425cf017ff2
                         style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all<Color>(
                               const Color.fromARGB(255, 189, 121, 96)),
