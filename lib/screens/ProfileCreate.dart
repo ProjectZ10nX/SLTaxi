@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/EmailVerification.dart';
 
 class ProfileCreatePage extends StatefulWidget {
   const ProfileCreatePage({super.key});
@@ -32,6 +35,59 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
         _inputText = _inputText.substring(0, _inputText.length - 1);
       }
     });
+  }
+
+  void _userSubmit() async {
+    String fName = firstNameController.text;
+    String lName = lastNameController.text;
+    String email = emailController.text;
+
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+
+    if (fName == "" || lName == "" || email == "") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a valid credentials")),
+      );
+    } else {
+      User? user = auth.currentUser;
+
+      if (user != null) {
+        // User is signed in, retrieve the UID
+        String uid = user.uid;
+
+        String firstName = fName;
+        String lastName = lName;
+
+        Map<String, dynamic> userData = {
+          "id": uid, // User's UID
+          "email": email, // User's email
+          "firstname": firstName,
+          "lastname": lastName,
+        };
+        //New Method Start
+
+        try {
+          // Save data to Firestore using UID as document ID
+          await firestore.collection('users').doc(uid).set(userData);
+
+          //Redirect User to Conform your Email Screen
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const EmailVerification()),
+            (Route<dynamic> route) => false,
+          );
+        } catch (e) {
+          print("Error adding user details: $e");
+        }
+
+        //New Method End
+      } else {
+        // No user is signed in
+        print("No user is currently signed in.");
+      }
+    }
   }
 
   double spacePadding = 5.0;
@@ -239,7 +295,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
                         width: 200,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: _userSubmit,
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all<Color>(
                                 const Color.fromARGB(255, 189, 121, 96)),

@@ -426,9 +426,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase authentication package
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/ProfileCreate.dart';
 import 'package:mrdrop/widgets/keyboard.dart'; // Your custom keyboard widget
-
-import 'home_screen.dart'; // Replace with your actual HomeScreen import
 
 class VerificationCode extends StatefulWidget {
   final String verificationId; // Verification ID received from Firebase
@@ -497,7 +496,7 @@ class _VerificationCodeState extends State<VerificationCode> {
       // Navigate to HomeScreen if OTP is valid
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const ProfileCreatePage()),
       );
     } catch (e) {
       // Show error if OTP verification fails

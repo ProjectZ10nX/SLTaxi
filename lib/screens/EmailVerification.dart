@@ -1,7 +1,54 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class EmailVerification extends StatelessWidget {
   const EmailVerification({super.key});
+
+  Future<bool> _checkEmailAuth() async {
+    bool isAuth = false;
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid) // UID is used as the document ID
+            .get();
+
+        if (userDoc.exists) {
+          // Check if the email field exists in the document
+          String? email = userDoc['email'];
+
+          if (email != null) {
+            // Update the user's email in Firebase Authentication
+            await user.verifyBeforeUpdateEmail(email);
+
+            // Send the verification email
+            await user.sendEmailVerification();
+
+            // Send the verification email
+            await user.sendEmailVerification();
+
+            print("Verification email sent to $email!");
+
+            return isAuth = true;
+          } else {
+            print("Email field is missing in the Firestore document.");
+            return isAuth = false;
+          }
+        } else {
+          print("UserDoc Doesn't Exists!");
+          return isAuth = false;
+        }
+      } else {
+        print("No user is currently logged in.");
+        return isAuth = false;
+      }
+    } catch (e) {
+      print("Error sending verification email: $e");
+    }
+    return isAuth = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +108,7 @@ class EmailVerification extends StatelessWidget {
                 width: 150,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _checkEmailAuth,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
                         const Color.fromARGB(255, 220, 204, 198)),
