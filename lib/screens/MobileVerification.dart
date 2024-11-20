@@ -13,12 +13,30 @@ class MobileVerification extends StatefulWidget {
 class _MobileVerificationState extends State<MobileVerification> {
   String _inputText = "";
   String phoneNumber = '';
-  List<DropdownMenuItem<dynamic>> items = [];
+  List<DropdownMenuItem<dynamic>> items = [
+    DropdownMenuItem(value: '+1', child: Text('USA (+1)')),
+    DropdownMenuItem(value: '+44', child: Text('UK (+44)')),
+    DropdownMenuItem(value: '+94', child: Text('Sri Lanka (+94)')),
+  ];
   String _selectedCountryCode = '+94';
   bool _isLoading = false;
 
+  TextEditingController phoneNumberController = TextEditingController();
+
   Future<void> _verifyPhone() async {
-    if (phoneNumberController.text.isEmpty) return;
+    if (phoneNumberController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Phone number cannot be empty')),
+      );
+      return;
+    }
+
+    if (!RegExp(r'^\d{9,15}$').hasMatch(_inputText)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Enter a valid phone number')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -44,12 +62,11 @@ class _MobileVerificationState extends State<MobileVerification> {
   }
 
   dynamic countryChanged(dynamic value) {
+    setState(() {
+      _selectedCountryCode = value;
+    });
     return value;
   }
-
-  TextEditingController phoneNumberController = TextEditingController();
-
-  //ToDo - Keyboard is Working
 
   void _handleKeyPress(String value) {
     setState(() {
@@ -131,6 +148,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                       child: Row(
                         children: [
                           DropdownButton(
+                            value: _selectedCountryCode,
                             items: items,
                             onChanged: countryChanged,
                             hint: const Text("+94"),
@@ -179,14 +197,12 @@ class _MobileVerificationState extends State<MobileVerification> {
                       width: 200,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          _verifyPhone();
-                        },
+                        onPressed: _verifyPhone,
                         style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all<Color>(
+                          backgroundColor: MaterialStateProperty.all<Color>(
                               const Color.fromARGB(255, 189, 121, 96)),
                           shape:
-                              WidgetStateProperty.all<RoundedRectangleBorder>(
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   12.0), // Set your desired radius here
@@ -218,6 +234,9 @@ class _MobileVerificationState extends State<MobileVerification> {
           ),
         ],
       ),
+      // Loading indicator
+      floatingActionButton:
+          _isLoading ? Center(child: CircularProgressIndicator()) : null,
     );
   }
 }
