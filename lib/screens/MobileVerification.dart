@@ -11,7 +11,57 @@ class MobileVerification extends StatefulWidget {
 class _MobileVerificationState extends State<MobileVerification> {
   String _inputText = "";
   String phoneNumber = '';
+<<<<<<< Updated upstream
   List<DropdownMenuItem<dynamic>> items = [];
+=======
+  List<DropdownMenuItem<dynamic>> items = [
+    const DropdownMenuItem(value: '+1', child: Text('USA (+1)')),
+    const DropdownMenuItem(value: '+44', child: Text('UK (+44)')),
+    const DropdownMenuItem(value: '+94', child: Text('Sri Lanka (+94)')),
+  ];
+  String _selectedCountryCode = '+94';
+  bool _isLoading = false;
+
+  TextEditingController phoneNumberController = TextEditingController();
+
+  Future<void> _verifyPhone() async {
+    if (phoneNumberController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Phone number cannot be empty')),
+      );
+      return;
+    }
+
+    if (!RegExp(r'^\d{9,15}$').hasMatch(_inputText)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a valid phone number')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    await FirebaseService.verifyPhone(
+      phoneNumber: '$_selectedCountryCode$_inputText',
+      onCodeSent: (String verificationId) {
+        setState(() => _isLoading = false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                VerificationCode(verificationId: verificationId),
+          ),
+        );
+      },
+      onError: (String error) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+      },
+    );
+  }
+>>>>>>> Stashed changes
 
   dynamic countryChanged(dynamic value) {
     return value;
@@ -182,6 +232,12 @@ class _MobileVerificationState extends State<MobileVerification> {
           ),
         ],
       ),
+<<<<<<< Updated upstream
+=======
+      // Loading indicator
+      floatingActionButton:
+          _isLoading ? const Center(child: CircularProgressIndicator()) : null,
+>>>>>>> Stashed changes
     );
   }
 }

@@ -362,6 +362,63 @@ class _VerificationCodeState extends State<VerificationCode> {
       ),
     );
   }
+<<<<<<< Updated upstream
+=======
+
+  Widget _otpTextField(TextEditingController controller) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          maxLength: 1,
+          textAlign: TextAlign.center,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            counterText: "",
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 12,
+            ),
+          ),
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _actionButton(
+      {required String label,
+      required Color color,
+      required VoidCallback onPressed}) {
+    return SizedBox(
+      width: 150,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all<Color>(color),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+>>>>>>> Stashed changes
 }
 
 class CornerPainter extends CustomPainter {
