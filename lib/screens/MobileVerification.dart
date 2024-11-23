@@ -34,7 +34,7 @@ class _MobileVerificationState extends State<MobileVerification> {
 
     if (!RegExp(r'^\d{9,15}$').hasMatch(_inputText)) {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('Enter a valid phone number')),
+        const SnackBar(content: Text('Enter a valid phone number')),
       );
       return;
     }
@@ -61,8 +61,6 @@ class _MobileVerificationState extends State<MobileVerification> {
       },
     );
   }
-
-
 
   dynamic countryChanged(dynamic value) {
     setState(() {
@@ -237,8 +235,6 @@ class _MobileVerificationState extends State<MobileVerification> {
           ),
         ],
       ),
-
-      
       // Loading indicator
       floatingActionButton:
           _isLoading ? Center(child: CircularProgressIndicator()) : null,
