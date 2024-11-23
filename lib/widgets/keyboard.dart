@@ -101,7 +101,7 @@ class CustomNumericKeyboard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border:
-                  text == '5' ? Border.all(color: Colors.blue, width: 2) : null,
+                  text == '' ? Border.all(color: Colors.blue, width: 2) : null,
             ),
             child: Center(
               child: isBackspace

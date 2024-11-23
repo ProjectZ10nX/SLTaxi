@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/VerificationCodeScreen.dart';
+import 'package:mrdrop/services/firebase_service.dart';
 import 'package:mrdrop/widgets/keyboard.dart';
 
 class MobileVerification extends StatefulWidget {
@@ -11,9 +13,7 @@ class MobileVerification extends StatefulWidget {
 class _MobileVerificationState extends State<MobileVerification> {
   String _inputText = "";
   String phoneNumber = '';
-<<<<<<< Updated upstream
-  List<DropdownMenuItem<dynamic>> items = [];
-=======
+
   List<DropdownMenuItem<dynamic>> items = [
     const DropdownMenuItem(value: '+1', child: Text('USA (+1)')),
     const DropdownMenuItem(value: '+44', child: Text('UK (+44)')),
@@ -27,14 +27,14 @@ class _MobileVerificationState extends State<MobileVerification> {
   Future<void> _verifyPhone() async {
     if (phoneNumberController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Phone number cannot be empty')),
+        SnackBar(content: Text('Phone number cannot be empty')),
       );
       return;
     }
 
     if (!RegExp(r'^\d{9,15}$').hasMatch(_inputText)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid phone number')),
+         SnackBar(content: Text('Enter a valid phone number')),
       );
       return;
     }
@@ -42,7 +42,7 @@ class _MobileVerificationState extends State<MobileVerification> {
     setState(() => _isLoading = true);
 
     await FirebaseService.verifyPhone(
-      phoneNumber: '$_selectedCountryCode$_inputText',
+      phoneNumber: '$_selectedCountryCode${_inputText}',
       onCodeSent: (String verificationId) {
         setState(() => _isLoading = false);
         Navigator.push(
@@ -61,17 +61,20 @@ class _MobileVerificationState extends State<MobileVerification> {
       },
     );
   }
->>>>>>> Stashed changes
+
+
 
   dynamic countryChanged(dynamic value) {
+    setState(() {
+      _selectedCountryCode = value;
+    });
     return value;
   }
-
-  TextEditingController phoneNumberController = TextEditingController();
 
   void _handleKeyPress(String value) {
     setState(() {
       _inputText += value;
+      phoneNumberController.text = _inputText;
     });
   }
 
@@ -79,6 +82,7 @@ class _MobileVerificationState extends State<MobileVerification> {
     setState(() {
       if (_inputText.isNotEmpty) {
         _inputText = _inputText.substring(0, _inputText.length - 1);
+        phoneNumberController.text = _inputText;
       }
     });
   }
@@ -147,6 +151,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                       child: Row(
                         children: [
                           DropdownButton(
+                            value: _selectedCountryCode,
                             items: items,
                             onChanged: countryChanged,
                             hint: const Text("+94"),
@@ -195,12 +200,12 @@ class _MobileVerificationState extends State<MobileVerification> {
                       width: 200,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _verifyPhone,
                         style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all<Color>(
+                          backgroundColor: MaterialStateProperty.all<Color>(
                               const Color.fromARGB(255, 189, 121, 96)),
                           shape:
-                              WidgetStateProperty.all<RoundedRectangleBorder>(
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   12.0), // Set your desired radius here
@@ -232,12 +237,11 @@ class _MobileVerificationState extends State<MobileVerification> {
           ),
         ],
       ),
-<<<<<<< Updated upstream
-=======
+
+      
       // Loading indicator
       floatingActionButton:
-          _isLoading ? const Center(child: CircularProgressIndicator()) : null,
->>>>>>> Stashed changes
+          _isLoading ? Center(child: CircularProgressIndicator()) : null,
     );
   }
 }
