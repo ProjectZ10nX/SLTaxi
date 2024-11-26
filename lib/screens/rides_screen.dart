@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mrdrop/screens/home_screen.dart';
+import 'package:mrdrop/screens/rideSelect.dart';
 
 class RidesScreen extends StatefulWidget {
   const RidesScreen({super.key});
@@ -23,13 +25,44 @@ class _RidesScreenState extends State<RidesScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: _center,
-              zoom: 15.0,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomeScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.location_on_outlined,
+                  color: Colors.black,
+                ),
+              )
+            ],
           ),
+          // GoogleMap(
+          //   onMapCreated: _onMapCreated,
+          //   initialCameraPosition: CameraPosition(
+          //     target: _center,
+          //     zoom: 15.0,
+          //   ),
+          // ),
+          Padding(
+            padding: const EdgeInsets.only(top: 400),
+            child: _buildBottomButton(),
+          ),
+
           Align(
             alignment: Alignment.bottomCenter,
             child: DraggableScrollableSheet(
@@ -48,7 +81,6 @@ class _RidesScreenState extends State<RidesScreen> {
                   child: ListView(
                     controller: scrollController,
                     children: [
-                      _buildBottomButton(),
                       const SizedBox(
                         height: 10,
                       ),
@@ -62,20 +94,40 @@ class _RidesScreenState extends State<RidesScreen> {
                             _buildLocationInput('PICKUP', 'Location fetched',
                                 Icons.favorite_border, Colors.blue),
                             _buildDottedLine(),
-                            _buildLocationInput('DROP', 'Where are you going?',
-                                Icons.add, Colors.orange),
+                            _buildLocationInput(
+                              'DROP',
+                              'Where are you going?',
+                              Icons.add,
+                              Colors.orange,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Rideselect()));
+                              },
+                            ),
                           ],
                         )
                       else
                         Column(
                           children: [
-                            _buildLocationInput('START', 'Starting location',
+                            _buildLocationInput('PICKUP', 'Location fetched',
                                 Icons.favorite_border, Colors.blue),
+                            _buildLocationInput('STOP', 'Where are you going?',
+                                Icons.abc, Colors.green),
                             _buildLocationInput(
                               'RETURN',
-                              'Return destiantion',
+                              'Same as pickup',
                               Icons.add,
                               Colors.red,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Rideselect()));
+                              },
                             ),
                           ],
                         ),
@@ -96,12 +148,12 @@ class _RidesScreenState extends State<RidesScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildSelectableCard("One Way", isOneWaySelected, () {
+          _buildSelectableCard('One Way', isOneWaySelected, () {
             setState(() {
               isOneWaySelected = true;
             });
           }),
-          _buildSelectableCard('Return Trip', !isOneWaySelected, () {
+          _buildSelectableCard('Return Trip*', !isOneWaySelected, () {
             setState(() {
               isOneWaySelected = false;
             });
@@ -136,7 +188,8 @@ Widget _buildSelectableCard(String title, bool isSelected, VoidCallback onTap) {
 }
 
 Widget _buildLocationInput(
-    String label, String placeholder, IconData icon, Color labelColor) {
+    String label, String placeholder, IconData icon, Color labelColor,
+    {VoidCallback? onPressed}) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
     child: Row(
@@ -150,11 +203,13 @@ Widget _buildLocationInput(
           ),
           padding: const EdgeInsets.all(4),
           child: Center(
-            child: Text(label,
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                )),
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 20),
@@ -168,10 +223,16 @@ Widget _buildLocationInput(
             style: const TextStyle(fontSize: 14),
           ),
         ),
-        Icon(
-          icon,
-          color: Colors.grey,
-        ),
+        if (label == "STOP")
+          const SizedBox.shrink()
+        else
+          IconButton(
+            icon: Icon(
+              icon,
+              color: const Color.fromARGB(255, 73, 73, 73),
+            ),
+            onPressed: onPressed,
+          ),
       ],
     ),
   );
@@ -179,8 +240,8 @@ Widget _buildLocationInput(
 
 Widget _buildDottedLine() {
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16.0),
-    child: Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    child: SizedBox(
       height: 1,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -190,17 +251,17 @@ Widget _buildDottedLine() {
           final dashCount = (boxWidth / (dashWidth + dashSpace)).floor();
 
           return Flex(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            direction: Axis.horizontal,
             children: List.generate(dashCount, (_) {
               return const SizedBox(
                 width: dashWidth,
                 child: Divider(
-                  color: Colors.grey,
+                  color: Colors.black,
                   thickness: 1,
                 ),
               );
             }),
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            direction: Axis.horizontal,
           );
         },
       ),

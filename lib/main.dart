@@ -1,19 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/home_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:mrdrop/screens/home_screen.dart';
 import 'package:mrdrop/screens/MobileVerification.dart';
 import 'package:mrdrop/screens/authWrapper.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
-  // await FirebaseAppCheck.instance.activate(
-  //   androidProvider:
-  //       AndroidProvider.playIntegrity, // Play Integrity for Android
-  // );
-  await FirebaseAppCheck.instance.activate();
+void main() {
   runApp(const MyApp());
 }
 
@@ -59,8 +54,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const MobileVerification()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             },
             child: const Text("Go"),

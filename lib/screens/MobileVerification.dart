@@ -13,10 +13,11 @@ class MobileVerification extends StatefulWidget {
 class _MobileVerificationState extends State<MobileVerification> {
   String _inputText = "";
   String phoneNumber = '';
+
   List<DropdownMenuItem<dynamic>> items = [
-    DropdownMenuItem(value: '+1', child: Text('USA (+1)')),
-    DropdownMenuItem(value: '+44', child: Text('UK (+44)')),
-    DropdownMenuItem(value: '+94', child: Text('Sri Lanka (+94)')),
+    const DropdownMenuItem(value: '+1', child: Text('USA (+1)')),
+    const DropdownMenuItem(value: '+44', child: Text('UK (+44)')),
+    const DropdownMenuItem(value: '+94', child: Text('Sri Lanka (+94)')),
   ];
   String _selectedCountryCode = '+94';
   bool _isLoading = false;
@@ -33,7 +34,7 @@ class _MobileVerificationState extends State<MobileVerification> {
 
     if (!RegExp(r'^\d{9,15}$').hasMatch(_inputText)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Enter a valid phone number')),
+        const SnackBar(content: Text('Enter a valid phone number')),
       );
       return;
     }
