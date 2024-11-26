@@ -424,8 +424,10 @@
 //   bool shouldRepaint(CustomPainter oldDelegate) => false;
 // }
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase authentication package
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/EmailVerification.dart';
 import 'package:mrdrop/screens/ProfileCreate.dart';
 import 'package:mrdrop/widgets/keyboard.dart'; // Your custom keyboard widget
 
@@ -446,7 +448,11 @@ class _VerificationCodeState extends State<VerificationCode> {
   final TextEditingController fivethNumberController = TextEditingController();
   final TextEditingController sixethNumberController = TextEditingController();
 
+  User? user = FirebaseAuth.instance.currentUser;
+//Change this From here
+
   String _inputText = "";
+  String? Email = "nomail";
 
   void _handleKeyPress(String value) {
     setState(() {
@@ -462,6 +468,36 @@ class _VerificationCodeState extends State<VerificationCode> {
     });
   }
 
+  String? nullTxt = "null";
+  Future<String?> _checkRegister() async {
+    if (user != null) {
+      // Get email from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user?.uid)
+          .get();
+
+      Email = userDoc.data()?['email'].toString();
+
+      if (userDoc.exists && userDoc.data()?['email'] != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EmailVerification(
+                    Email: Email,
+                    uid: user!.uid,
+                  )),
+        );
+
+        nullTxt = Email;
+        return nullTxt;
+      } else {
+        return nullTxt;
+      }
+    }
+    return nullTxt;
+  }
+
   // Combine OTP from the text controllers
   String _getEnteredOTP() {
     return firstNumberController.text +
@@ -473,6 +509,10 @@ class _VerificationCodeState extends State<VerificationCode> {
   }
 
   Future<void> _verifyOTP() async {
+    _checkRegister();
+
+    print("Null text is : ");
+    print(nullTxt);
     String enteredOTP = _getEnteredOTP();
 
     if (enteredOTP.length != 6) {
@@ -493,11 +533,23 @@ class _VerificationCodeState extends State<VerificationCode> {
       // Sign in with the credential
       await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // Navigate to HomeScreen if OTP is valid
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfileCreatePage()),
-      );
+      //ToDo - Change this as if user account already created send him to Email Verification Screen
+
+      if (nullTxt == "null") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileCreatePage()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EmailVerification(
+                    Email: Email,
+                    uid: user!.uid,
+                  )),
+        );
+      }
     } catch (e) {
       // Show error if OTP verification fails
       ScaffoldMessenger.of(context).showSnackBar(
