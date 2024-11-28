@@ -34,6 +34,7 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   Future<void> _resendVerificationEmail() async {
+    final user = FirebaseAuth.instance.currentUser;
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -68,8 +69,28 @@ class _EmailVerificationState extends State<EmailVerification> {
 //ToDo - refrase this method
   Future<void> _checkVerificationStatus() async {
     try {
-      String email = widget.Email.toString();
       final user = FirebaseAuth.instance.currentUser;
+      String email = widget.Email.toString();
+      //ToDo - Check Email is Verified or not
+      if (user!.emailVerified) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .update({
+            'isEmailVerified': "true",
+          });
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (route) => false, // Clears all previous routes
+          );
+          print("Email verification status updated in Firestore");
+          deleteTemporaryUser(email);
+        } catch (e) {
+          print("Error updating Firestore: $e");
+        }
+      }
 
       if (user != null) {
         UserCredential userCredential =
@@ -83,7 +104,23 @@ class _EmailVerificationState extends State<EmailVerification> {
           print("Email is verified : ${user.emailVerified.toString()}");
           //Add UID from Widget
           String userUid = widget.uid.toString();
+          //Print User UID is :
+          print("User UID is : ${userUid}");
           await updateEmailVerificationStatus(userUid, true);
+
+          String email = widget.Email.toString();
+          try {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(userUid)
+                .update({
+              'isEmailVerified': "true",
+            });
+            print("Email verification status updated in Firestore");
+            deleteTemporaryUser(email);
+          } catch (e) {
+            print("Error updating Firestore: $e");
+          }
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -106,16 +143,7 @@ class _EmailVerificationState extends State<EmailVerification> {
 //Update Verification Status
   Future<void> updateEmailVerificationStatus(
       String userId, bool isVerified) async {
-    String email = widget.Email.toString();
-    try {
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'isEmailVerified': isVerified,
-      });
-      print("Email verification status updated in Firestore");
-      deleteTemporaryUser(email);
-    } catch (e) {
-      print("Error updating Firestore: $e");
-    }
+    //Copied User isEmailVerified method
   }
 
 //Delete Temporory User

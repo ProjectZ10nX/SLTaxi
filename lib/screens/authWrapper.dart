@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mrdrop/main.dart';
 import 'package:mrdrop/screens/EmailVerification.dart';
 import 'package:mrdrop/screens/home_screen.dart';
+import 'package:mrdrop/screens/languageSelection.dart';
 
 class AuthWrapper extends StatelessWidget {
   User? user = FirebaseAuth.instance.currentUser;
@@ -54,7 +54,7 @@ class AuthWrapper extends StatelessWidget {
             // Navigate to the home screen if authenticated
           } else {
             // Navigate to the login screen if not authenticated
-            return const HomePage();
+            return const LanguageSelectionScreen();
           }
         }
 
