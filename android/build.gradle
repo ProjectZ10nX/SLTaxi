@@ -16,19 +16,13 @@ allprojects {
         google()
         mavenCentral()
     }
-<<<<<<< Updated upstream
+
     // configurations.all {
     //     resolutionStrategy {
     //         force 'com.google.android.play:core:1.10.3' // Adjust version as needed
     //     }
     // }
-=======
 
-    configurations.all {
-        resolutionStrategy {
-            force 'com.google.android.play:core:1.10.3' // Adjust version as needed
-        }
-    }
 
     gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
@@ -37,7 +31,6 @@ allprojects {
     }
 }
 
->>>>>>> Stashed changes
 }
 
 rootProject.buildDir = "../build"

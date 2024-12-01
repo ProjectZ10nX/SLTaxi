@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:mrdrop/screens/MobileVerification.dart';
 import 'package:mrdrop/screens/home_screen.dart';
->>>>>>> Stashed changes
 
 class LanguageSelectionScreen extends StatelessWidget {
   const LanguageSelectionScreen({super.key});
@@ -85,11 +82,11 @@ class LanguageSelectionScreen extends StatelessWidget {
                                 const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Column(
                               children: [
-                                _buildLanguageCard('Sinhala'),
+                                _buildLanguageCard(context, 'Sinhala'),
                                 const SizedBox(height: 15),
-                                _buildLanguageCard('Tamil'),
+                                _buildLanguageCard(context, 'Tamil'),
                                 const SizedBox(height: 15),
-                                _buildLanguageCard('English'),
+                                _buildLanguageCard(context, 'English'),
                               ],
                             ),
                           ),
@@ -108,7 +105,7 @@ class LanguageSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageCard(String language) {
+  Widget _buildLanguageCard(BuildContext context, String language) {
     return Card(
       elevation: 2,
       shadowColor: Colors.black26,
@@ -117,12 +114,8 @@ class LanguageSelectionScreen extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-<<<<<<< Updated upstream
-          // Handle language selection
-=======
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => HomeScreen()));
->>>>>>> Stashed changes
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(

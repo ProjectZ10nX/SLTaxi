@@ -3,13 +3,6 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mrdrop/screens/home_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-<<<<<<< Updated upstream
-=======
-import 'package:mrdrop/screens/authWrapper.dart';
-import 'package:mrdrop/screens/home_screen.dart';
->>>>>>> Stashed changes
-
-import 'package:mrdrop/screens/home_screen.dart';
 import 'package:mrdrop/screens/MobileVerification.dart';
 
 void main() {
