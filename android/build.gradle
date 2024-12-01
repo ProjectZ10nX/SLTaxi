@@ -7,9 +7,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.4.0' // Updated Google Services version
-        classpath 'com.android.tools.build:gradle:8.1.0' // Updated Android Gradle Plugin
-        
-        
+       classpath 'com.android.tools.build:gradle:8.1.1' // Updated Android Gradle Plugin
     }
 }
 
@@ -18,18 +16,36 @@ allprojects {
         google()
         mavenCentral()
     }
+<<<<<<< Updated upstream
     // configurations.all {
     //     resolutionStrategy {
     //         force 'com.google.android.play:core:1.10.3' // Adjust version as needed
     //     }
     // }
+=======
+
+    configurations.all {
+        resolutionStrategy {
+            force 'com.google.android.play:core:1.10.3' // Adjust version as needed
+        }
+    }
+
+    gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.fork = true
+        options.forkOptions.executable = "${System.getenv('JAVA_HOME')}/bin/javac" // Ensure JAVA_HOME is set to Java 17
+    }
+}
+
+>>>>>>> Stashed changes
 }
 
 rootProject.buildDir = "../build"
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-    
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

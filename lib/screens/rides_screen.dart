@@ -23,121 +23,127 @@ class _RidesScreenState extends State<RidesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomeScreen(),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.location_on_outlined,
+                    color: Colors.black,
+                  ),
+                )
+              ],
+            ),
+            // GoogleMap(
+            //   onMapCreated: _onMapCreated,
+            //   initialCameraPosition: CameraPosition(
+            //     target: _center,
+            //     zoom: 15.0,
+            //   ),
+            // ),
+            Padding(
+              padding: const EdgeInsets.only(top: 400),
+              child: _buildBottomButton(),
+            ),
+
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: DraggableScrollableSheet(
+                initialChildSize: 0.35,
+                minChildSize: 0.2,
+                maxChildSize: 0.6,
+                builder: (context, scrollController) {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      boxShadow: [
+                        BoxShadow(blurRadius: 10, color: Colors.black26)
+                      ],
+                    ),
+                    child: ListView(
+                      controller: scrollController,
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        _buildTripTypeSelector(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        if (isOneWaySelected)
+                          Column(
+                            children: [
+                              _buildLocationInput('PICKUP', 'Location fetched',
+                                  Icons.favorite_border, Colors.blue),
+                              _buildDottedLine(),
+                              _buildLocationInput(
+                                'DROP',
+                                'Where are you going?',
+                                Icons.add,
+                                Colors.orange,
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Rideselect()));
+                                },
+                              ),
+                            ],
+                          )
+                        else
+                          Column(
+                            children: [
+                              _buildLocationInput('PICKUP', 'Location fetched',
+                                  Icons.favorite_border, Colors.blue),
+                              _buildLocationInput(
+                                  'STOP',
+                                  'Where are you going?',
+                                  Icons.abc,
+                                  Colors.green),
+                              _buildLocationInput(
+                                'RETURN',
+                                'Same as pickup',
+                                Icons.add,
+                                Colors.red,
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Rideselect()));
+                                },
+                              ),
+                            ],
+                          ),
+                      ],
                     ),
                   );
                 },
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.location_on_outlined,
-                  color: Colors.black,
-                ),
-              )
-            ],
-          ),
-          // GoogleMap(
-          //   onMapCreated: _onMapCreated,
-          //   initialCameraPosition: CameraPosition(
-          //     target: _center,
-          //     zoom: 15.0,
-          //   ),
-          // ),
-          Padding(
-            padding: const EdgeInsets.only(top: 400),
-            child: _buildBottomButton(),
-          ),
-
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.35,
-              minChildSize: 0.2,
-              maxChildSize: 0.6,
-              builder: (context, scrollController) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                    boxShadow: [
-                      BoxShadow(blurRadius: 10, color: Colors.black26)
-                    ],
-                  ),
-                  child: ListView(
-                    controller: scrollController,
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildTripTypeSelector(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      if (isOneWaySelected)
-                        Column(
-                          children: [
-                            _buildLocationInput('PICKUP', 'Location fetched',
-                                Icons.favorite_border, Colors.blue),
-                            _buildDottedLine(),
-                            _buildLocationInput(
-                              'DROP',
-                              'Where are you going?',
-                              Icons.add,
-                              Colors.orange,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Rideselect()));
-                              },
-                            ),
-                          ],
-                        )
-                      else
-                        Column(
-                          children: [
-                            _buildLocationInput('PICKUP', 'Location fetched',
-                                Icons.favorite_border, Colors.blue),
-                            _buildLocationInput('STOP', 'Where are you going?',
-                                Icons.abc, Colors.green),
-                            _buildLocationInput(
-                              'RETURN',
-                              'Same as pickup',
-                              Icons.add,
-                              Colors.red,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Rideselect()));
-                              },
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                );
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

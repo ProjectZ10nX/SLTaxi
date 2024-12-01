@@ -17,7 +17,7 @@ class _RideselectState extends State<Rideselect> {
         children: [
           // Top Components
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            padding: const EdgeInsets.only(top: 20, left: 10, right: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -36,30 +36,108 @@ class _RideselectState extends State<Rideselect> {
                   ),
                 ),
                 Container(
-                  width: 130,
+                  width: 140,
                   height: 35,
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 163, 227, 67),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.person_2_outlined,
-                        color: Color.fromARGB(255, 103, 103, 103),
-                        size: 16,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Colors.transparent, // Transparent background
+                      shadowColor: Colors.transparent, // Remove shadow
+                      padding: EdgeInsets.zero, // Remove padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(6), // Match container radius
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Book a friend",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromARGB(255, 103, 103, 103),
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
                         ),
-                      ),
-                    ],
+                        builder: (BuildContext context) {
+                          return SizedBox(
+                            height: 270,
+                            width: 400,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 30,
+                                    left: 20,
+                                  ),
+                                  child: const Text(
+                                    'Who are you booking for?',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                Divider(height: 1),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.list, size: 24),
+                                  title: Text('Search from contacts'),
+                                  trailing: Icon(Icons.search),
+                                  onTap: () {
+                                    // Action for Search from contacts
+                                  },
+                                ),
+                                Divider(height: 1),
+                                ListTile(
+                                  leading: Icon(Icons.history, size: 24),
+                                  title: Text('Recently used (0)'),
+                                  trailing: Icon(Icons.chevron_right),
+                                  onTap: () {
+                                    // Action for Recently used
+                                  },
+                                ),
+                                Divider(height: 1),
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.person_add_alt_outlined,
+                                    size: 24,
+                                  ),
+                                  title: Text('Add new contact'),
+                                  trailing: Icon(Icons.add),
+                                  onTap: () {},
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          Icons.person_2_outlined,
+                          color: Color.fromARGB(255, 103, 103, 103),
+                          size: 16,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          "Book a friend",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromARGB(255, 103, 103, 103),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const Text(
@@ -89,7 +167,11 @@ class _RideselectState extends State<Rideselect> {
           ),
           Expanded(
               child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 30,
+              right: 20,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -180,8 +262,8 @@ class _RideselectState extends State<Rideselect> {
             enabled: isEditable,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: const TextStyle(
-                color: Colors.grey,
+              hintStyle: TextStyle(
+                color: title == "PICKUP" ? Colors.black : Colors.grey,
               ),
               border: const UnderlineInputBorder(),
             ),

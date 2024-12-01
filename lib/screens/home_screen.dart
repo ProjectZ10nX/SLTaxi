@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/rentals_screen.dart';
 import 'package:mrdrop/screens/rides_screen.dart';
 import 'package:mrdrop/widgets/card_widget.dart';
 import 'package:mrdrop/widgets/custom_card_widget.dart';
@@ -100,7 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const RentalsScreen()));
+                    },
                     child: const CardWidget(
                       asset: "assets/rentals.png",
                       label: "Rentals",

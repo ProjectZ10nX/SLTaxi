@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
+=======
+import 'package:mrdrop/screens/MobileVerification.dart';
+import 'package:mrdrop/screens/home_screen.dart';
+>>>>>>> Stashed changes
 
 class LanguageSelectionScreen extends StatelessWidget {
   const LanguageSelectionScreen({super.key});
@@ -112,7 +117,12 @@ class LanguageSelectionScreen extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
+<<<<<<< Updated upstream
           // Handle language selection
+=======
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+>>>>>>> Stashed changes
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
