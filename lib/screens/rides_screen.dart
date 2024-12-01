@@ -51,18 +51,17 @@ class _RidesScreenState extends State<RidesScreen> {
               )
             ],
           ),
-          // GoogleMap(
-          //   onMapCreated: _onMapCreated,
-          //   initialCameraPosition: CameraPosition(
-          //     target: _center,
-          //     zoom: 15.0,
-          //   ),
-          // ),
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 15.0,
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 400),
             child: _buildBottomButton(),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: DraggableScrollableSheet(

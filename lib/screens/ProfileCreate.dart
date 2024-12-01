@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mrdrop/screens/EmailVerification.dart';
+import 'package:mrdrop/screens/home_screen.dart';
 
 class ProfileCreatePage extends StatefulWidget {
   const ProfileCreatePage({super.key});
@@ -22,11 +23,35 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  bool _isLoading = false;
 
   void _handleKeyPress(String value) {
     setState(() {
       _inputText += value;
     });
+  }
+
+  User? user = FirebaseAuth.instance.currentUser;
+  void checkEmailVerified(BuildContext context) async {
+    try {
+      setState(() => _isLoading = true);
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
+      if (userDoc['isEmailVerified'] == "true") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else {
+        setState(() => _isLoading = false);
+        print(
+            "Profile Creation, Email Verification State is : ${userDoc['isEmailVerified']}");
+      }
+    } catch (e) {
+      print("Error in Profile Creation is : ${e.toString()}");
+    }
   }
 
   void _handleBackspace() {
@@ -65,6 +90,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
 
   void _userSubmit() async {
     try {
+      setState(() => _isLoading = true);
       String fName = firstNameController.text.trim();
       String lName = lastNameController.text.trim();
       String email = emailController.text.trim();
@@ -108,11 +134,13 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
       print("Email verification status: $emailVerificationStatus");
 
       if (emailVerificationStatus == true) {
+        print("USER UID IN Profile Create Screen Is : ${user.uid}");
+        String Id = user.uid;
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => EmailVerification(
-                  Email: emailController.text.trim(), uid: user.uid)),
+                  Email: emailController.text.trim(), uid: Id)),
           (Route<dynamic> route) => false,
         );
       }
@@ -130,6 +158,9 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      checkEmailVerified(context);
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -357,6 +388,8 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
           ],
         ),
       ),
+      floatingActionButton:
+          _isLoading ? Center(child: CircularProgressIndicator()) : null,
     );
   }
 }

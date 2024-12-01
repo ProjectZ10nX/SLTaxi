@@ -31,13 +31,30 @@ class MyApp extends StatelessWidget {
         Locale('en', ''), // English
       ],
       debugShowCheckedModeBanner: false,
-      home: AuthWrapper(),
+      home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Redirect after 1 second
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AuthWrapper()),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +70,6 @@ class HomePage extends StatelessWidget {
               width: 300,
               height: 300,
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AuthWrapper()),
-              );
-            },
-            child: const Text("Go"),
           ),
         ],
       ),

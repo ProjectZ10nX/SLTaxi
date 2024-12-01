@@ -8,7 +8,7 @@ import 'package:mrdrop/screens/home_screen.dart';
 class EmailVerification extends StatefulWidget {
   String? Email;
   String? uid;
-  EmailVerification({super.key, required this.Email, required String uid});
+  EmailVerification({super.key, required this.Email, required this.uid});
 
   @override
   State<EmailVerification> createState() => _EmailVerificationState();
@@ -18,9 +18,21 @@ class _EmailVerificationState extends State<EmailVerification> {
   bool _isLoading = false;
   Timer? timer;
 
+  String? email = "";
+  String? id = "";
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+  }
+
   @override
   void initState() {
     super.initState();
+    email = widget.Email;
+    id = widget.uid;
+    print("Email in initState is : ${email}");
+    print("UID in initState is : ${id}");
     // Start verification check timer
     // timer = Timer.periodic(const Duration(seconds: 3), (timer) {
     //   _checkVerificationStatus();
@@ -68,16 +80,18 @@ class _EmailVerificationState extends State<EmailVerification> {
 
 //ToDo - refrase this method
   Future<void> _checkVerificationStatus() async {
+    print("Email in Check Verification State is : ${email}");
+    print("UID in Check Verification State : ${id}");
     try {
       final user = FirebaseAuth.instance.currentUser;
+      print("Email Verified User's UID is : ${user!.uid}");
       String email = widget.Email.toString();
-      //ToDo - Check Email is Verified or not
+
       if (user!.emailVerified) {
         try {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user!.uid)
-              .update({
+          print("UID From widget IS: ${widget.uid}");
+
+          await FirebaseFirestore.instance.collection('users').doc(id).update({
             'isEmailVerified': "true",
           });
           Navigator.pushAndRemoveUntil(
@@ -90,6 +104,8 @@ class _EmailVerificationState extends State<EmailVerification> {
         } catch (e) {
           print("Error updating Firestore: $e");
         }
+      } else {
+        print("USER isn't Email Verified");
       }
 
       if (user != null) {
@@ -102,6 +118,9 @@ class _EmailVerificationState extends State<EmailVerification> {
         User? user = userCredential.user;
         if (user != null && user.emailVerified) {
           print("Email is verified : ${user.emailVerified.toString()}");
+          await FirebaseFirestore.instance.collection('users').doc(id).update({
+            'isEmailVerified': "true",
+          });
           //Add UID from Widget
           String userUid = widget.uid.toString();
           //Print User UID is :

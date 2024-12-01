@@ -9,7 +9,7 @@ class AuthWrapper extends StatelessWidget {
   User? user = FirebaseAuth.instance.currentUser;
   String? nullTxt = "null";
   String? Email = "nomaile";
-  Future<String?> _checkRegister() async {
+  Future<String?> _checkRegister(BuildContext context) async {
     if (user != null) {
       // Get email from Firestore
       final userDoc = await FirebaseFirestore.instance
@@ -18,6 +18,12 @@ class AuthWrapper extends StatelessWidget {
           .get();
 
       if (userDoc.exists && userDoc.data()?['email'] != null) {
+        if (userDoc['isEmailVerified'] == "true") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        }
         Email = userDoc.data()?['email'].toString();
         nullTxt = Email;
         return Email;
@@ -30,7 +36,7 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _checkRegister();
+    _checkRegister(context);
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {

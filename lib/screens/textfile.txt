@@ -16,21 +16,12 @@ class VerificationCode extends StatefulWidget {
 }
 
 class _VerificationCodeState extends State<VerificationCode> {
-  final TextEditingController firstNumberController = TextEditingController();
-  final TextEditingController secondNumberController = TextEditingController();
-  final TextEditingController thirdNumberController = TextEditingController();
-  final TextEditingController fourthNumberController = TextEditingController();
-  final TextEditingController fivethNumberController = TextEditingController();
-  final TextEditingController sixethNumberController = TextEditingController();
-  bool _isLoading = false;
-
-  final List<TextEditingController> controllers =
-      List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
 
+  bool _isLoading = false;
   User? user = FirebaseAuth.instance.currentUser;
-//Change this From here
-
+  String _inputText = "";
   String? Email = "nomail";
 
   void _handleKeyPress(String value) {
@@ -56,58 +47,41 @@ class _VerificationCodeState extends State<VerificationCode> {
           break;
         } else if (i > 0 && controllers[i - 1].text.isNotEmpty) {
           controllers[i - 1].clear();
-          focusNodes[i - 1]
-              .requestFocus(); // Move focus to the previous textbox
+          focusNodes[i - 1].requestFocus(); // Move focus to the previous textbox
           break;
         }
       }
     });
   }
 
-  String? nullTxt = "null";
   Future<String?> _checkRegister() async {
     if (user != null) {
-      // Get email from Firestore
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user?.uid)
-          .get();
-
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
       Email = userDoc.data()?['email'].toString();
 
       if (userDoc.exists && userDoc.data()?['email'] != null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => EmailVerification(
-                    Email: Email,
-                    uid: user!.uid,
-                  )),
+            builder: (context) => EmailVerification(
+              Email: Email,
+              uid: user!.uid,
+            ),
+          ),
         );
-
-        nullTxt = Email;
-        return nullTxt;
-      } else {
-        return nullTxt;
+        return Email;
       }
     }
-    return nullTxt;
+    return null;
   }
 
-  // Combine OTP from the text controllers
   String _getEnteredOTP() {
     return controllers.map((controller) => controller.text).join();
   }
 
   Future<bool> _checkEmailVerified() async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      print("User's UID in Verification Code Screen is : ${user!.uid}");
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user?.uid)
-          .get();
-      print(userDoc['isEmailVerified']);
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(user?.uid).get();
       if (userDoc['isEmailVerified'] == "true") {
         Navigator.pushReplacement(
           context,
@@ -116,22 +90,18 @@ class _VerificationCodeState extends State<VerificationCode> {
       }
       return true;
     } catch (e) {
-      print("Error In Verification Code Screen Is : ${e.toString()}");
+      print("Error in Verification Code Screen: ${e.toString()}");
       return false;
     }
   }
 
   Future<void> _verifyOTP() async {
     setState(() => _isLoading = true);
-    _checkRegister();
-    bool checkverified = await _checkEmailVerified();
-    if (checkverified == true) {}
-    print("Null text is : ");
-    print(nullTxt);
-    String enteredOTP = _getEnteredOTP();
+    await _checkRegister();
+    await _checkEmailVerified();
 
+    String enteredOTP = _getEnteredOTP();
     if (enteredOTP.length != 6) {
-      // Show error if OTP is incomplete
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a valid 6-digit OTP")),
       );
@@ -139,43 +109,26 @@ class _VerificationCodeState extends State<VerificationCode> {
     }
 
     try {
-      // Use Firebase to verify the OTP
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: widget.verificationId,
         smsCode: enteredOTP,
       );
 
-      // Sign in with the credential
       await FirebaseAuth.instance.signInWithCredential(credential);
 
-      //ToDo - Change this as if user account already created send him to Email Verification Screen
       final user = FirebaseAuth.instance.currentUser;
-
       if (user!.emailVerified) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
-        if (nullTxt == "null") {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ProfileCreatePage()),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                //Change Email Verificatio to AuthWrapper
-                builder: (context) => EmailVerification(
-                      Email: Email,
-                      uid: user!.uid,
-                    )),
-          );
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileCreatePage()),
+        );
       }
     } catch (e) {
-      // Show error if OTP verification fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Invalid OTP: $e")),
       );
@@ -188,43 +141,16 @@ class _VerificationCodeState extends State<VerificationCode> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Top green corner shape
-          Positioned(
-            right: 0,
-            top: 0,
-            child: CustomPaint(
-              size: const Size(150, 170),
-              painter: CornerPainter(),
-            ),
-          ),
-
-          // Bottom green corner shape
-          Positioned(
-            left: 0,
-            bottom: 250,
-            child: Transform.rotate(
-              angle: 3.14159, // 180 degrees in radians
-              child: CustomPaint(
-                size: Size(MediaQuery.of(context).size.width * 0.4,
-                    MediaQuery.of(context).size.height * 0.25),
-                painter: CornerPainter(),
-              ),
-            ),
-          ),
-
-          // Main content with keyboard aligned to bottom
           SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-                    // Logo section
+                    const SizedBox(height: 50),
                     Image.asset(
                       'assets/bgrlogo.png',
                       height: 100,
-                      width: double.infinity,
                     ),
                     const Text("Verification Code"),
                     const Padding(
@@ -235,10 +161,9 @@ class _VerificationCodeState extends State<VerificationCode> {
                         style: TextStyle(fontWeight: FontWeight.w100),
                       ),
                     ),
-                    const SizedBox(height: 20),
-
+                    const SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(
@@ -250,18 +175,13 @@ class _VerificationCodeState extends State<VerificationCode> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 50,
-                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _actionButton(
                           label: "Back",
                           color: const Color.fromARGB(255, 220, 204, 198),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                          onPressed: () => Navigator.pop(context),
                         ),
                         _actionButton(
                           label: "Next",
@@ -272,8 +192,6 @@ class _VerificationCodeState extends State<VerificationCode> {
                     ),
                   ],
                 ),
-
-                // Custom Numeric Keyboard at the bottom
                 SingleChildScrollView(
                   child: Container(
                     color: Colors.white,
@@ -292,38 +210,9 @@ class _VerificationCodeState extends State<VerificationCode> {
         ],
       ),
       floatingActionButton:
-          _isLoading ? Center(child: CircularProgressIndicator()) : null,
+          _isLoading ? const CircularProgressIndicator() : null,
     );
   }
-
-  // Widget _otpTextField(TextEditingController controller) {
-  //   return Expanded(
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //         color: Colors.grey[200],
-  //         borderRadius: BorderRadius.circular(8),
-  //       ),
-  //       child: TextField(
-  //         controller: controller,
-  //         keyboardType: TextInputType.number,
-  //         maxLength: 1,
-  //         textAlign: TextAlign.center,
-  //         decoration: const InputDecoration(
-  //           border: InputBorder.none,
-  //           counterText: "",
-  //           contentPadding: EdgeInsets.symmetric(
-  //             vertical: 12,
-  //           ),
-  //         ),
-  //         style: const TextStyle(
-  //           fontSize: 16,
-  //           fontWeight: FontWeight.w500,
-  //           color: Colors.black87,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _otpTextField({
     required TextEditingController controller,
@@ -351,10 +240,11 @@ class _VerificationCodeState extends State<VerificationCode> {
     );
   }
 
-  Widget _actionButton(
-      {required String label,
-      required Color color,
-      required VoidCallback onPressed}) {
+  Widget _actionButton({
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
     return SizedBox(
       width: 150,
       height: 50,
@@ -375,24 +265,4 @@ class _VerificationCodeState extends State<VerificationCode> {
       ),
     );
   }
-}
-
-class CornerPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFB4E66E)
-      ..style = PaintingStyle.fill;
-
-    final path = Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width, size.height)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
