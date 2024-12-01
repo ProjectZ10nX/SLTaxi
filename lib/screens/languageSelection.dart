@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:mrdrop/screens/MobileVerification.dart';
 import 'package:mrdrop/screens/home_screen.dart';
 
-class LanguageSelectionScreen extends StatelessWidget {
+
+class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
 
+  @override
+  State<LanguageSelectionScreen> createState() =>
+      _LanguageSelectionScreenState();
+}
+
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

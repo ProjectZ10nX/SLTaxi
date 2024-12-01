@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mrdrop/screens/rentals_screen.dart';
 import 'package:mrdrop/screens/rides_screen.dart';
@@ -47,10 +48,15 @@ class _HomeScreenState extends State<HomeScreen> {
               right: 2.0, top: 16.0), // Adjust the position of the logo
           child: Align(
             alignment: Alignment.topRight, // Align to the top right corner
-            child: Image.asset(
-              'assets/mrdrop.png',
-              height: 120,
-              width: 120,
+            child: InkWell(
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+              },
+              child: Image.asset(
+                'assets/mrdrop.png',
+                height: 120,
+                width: 120,
+              ),
             ),
           ),
         ),
