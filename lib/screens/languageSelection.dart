@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mrdrop/screens/MobileVerification.dart';
+import 'package:mrdrop/screens/home_screen.dart';
+
 
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
@@ -119,8 +121,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MobileVerification()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(

@@ -57,7 +57,8 @@ class DefaultFirebaseOptions {
     appId: '1:636860020540:android:033f38aab2d392663ed039',
     messagingSenderId: '636860020540',
     projectId: 'mrdrop-46e9d',
-    databaseURL: 'https://mrdrop-46e9d-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://mrdrop-46e9d-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'mrdrop-46e9d.firebasestorage.app',
   );
 }
