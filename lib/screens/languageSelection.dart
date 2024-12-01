@@ -89,11 +89,11 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                 const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Column(
                               children: [
-                                _buildLanguageCard('Sinhala'),
+                                _buildLanguageCard(context, 'Sinhala'),
                                 const SizedBox(height: 15),
-                                _buildLanguageCard('Tamil'),
+                                _buildLanguageCard(context, 'Tamil'),
                                 const SizedBox(height: 15),
-                                _buildLanguageCard('English'),
+                                _buildLanguageCard(context, 'English'),
                               ],
                             ),
                           ),
@@ -112,7 +112,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     );
   }
 
-  Widget _buildLanguageCard(String language) {
+  Widget _buildLanguageCard(BuildContext context, String language) {
     return Card(
       elevation: 2,
       shadowColor: Colors.black26,
