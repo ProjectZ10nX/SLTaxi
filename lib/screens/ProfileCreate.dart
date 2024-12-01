@@ -37,55 +37,91 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
     });
   }
 
-  void _userSubmit() async {
-    String fName = firstNameController.text;
-    String lName = lastNameController.text;
-    String email = emailController.text;
+  Future<bool> _checkEmailAuth() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    String email = emailController.text.trim();
+    if (user != null && email.isNotEmpty) {
+      try {
+        UserCredential tempUserCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: "Temporary@123",
+        );
 
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final FirebaseAuth auth = FirebaseAuth.instance;
-
-    if (fName == "" || lName == "" || email == "") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a valid credentials")),
-      );
-    } else {
-      User? user = auth.currentUser;
-
-      if (user != null) {
-        // User is signed in, retrieve the UID
-        String uid = user.uid;
-
-        String firstName = fName;
-        String lastName = lName;
-
-        Map<String, dynamic> userData = {
-          "id": uid, // User's UID
-          "email": email, // User's email
-          "firstname": firstName,
-          "lastname": lastName,
-        };
-        //New Method Start
-
-        try {
-          // Save data to Firestore using UID as document ID
-          await firestore.collection('users').doc(uid).set(userData);
-
-          //Redirect User to Conform your Email Screen
-
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const EmailVerification()),
-            (Route<dynamic> route) => false,
-          );
-        } catch (e) {
-          print("Error adding user details: $e");
+        // Send email verification
+        User? tempUser = tempUserCredential.user;
+        if (tempUser != null && !tempUser.emailVerified) {
+          await tempUser.sendEmailVerification();
+          print("Verification email sent to $email");
+          return true;
         }
+      } catch (e) {
+        print("Error sending verification email: $e");
+      }
+    }
 
-        //New Method End
-      } else {
-        // No user is signed in
-        print("No user is currently signed in.");
+    return false;
+  }
+
+  void _userSubmit() async {
+    try {
+      String fName = firstNameController.text.trim();
+      String lName = lastNameController.text.trim();
+      String email = emailController.text.trim();
+
+      print("Attempting submission with email: $email");
+
+      if (fName.isEmpty || lName.isEmpty || email.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please enter valid credentials")),
+        );
+        return;
+      }
+
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("No user is currently signed in")),
+        );
+        return;
+      }
+
+      // Save user data to Firestore
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        "id": user.uid,
+        "email": email,
+        "firstname": fName,
+        "lastname": lName,
+        "isEmailVerified": false,
+      });
+
+      print("User data saved to database");
+
+      // Handle email verification
+      bool emailVerificationStatus = false;
+      try {
+        emailVerificationStatus = await _checkEmailAuth();
+      } catch (e) {
+        print("Error is $e");
+      }
+
+      print("Email verification status: $emailVerificationStatus");
+
+      if (emailVerificationStatus == true) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EmailVerification(
+                  Email: emailController.text.trim(), uid: user.uid)),
+          (Route<dynamic> route) => false,
+        );
+      }
+    } catch (e) {
+      print("Error in user submission: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${e.toString()}")),
+        );
       }
     }
   }

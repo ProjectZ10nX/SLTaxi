@@ -1,53 +1,168 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mrdrop/screens/home_screen.dart';
 
-class EmailVerification extends StatelessWidget {
-  const EmailVerification({super.key});
+class EmailVerification extends StatefulWidget {
+  String? Email;
+  String? uid;
+  EmailVerification({super.key, required this.Email, required String uid});
 
-  Future<bool> _checkEmailAuth() async {
-    bool isAuth = false;
+  @override
+  State<EmailVerification> createState() => _EmailVerificationState();
+}
+
+class _EmailVerificationState extends State<EmailVerification> {
+  bool _isLoading = false;
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start verification check timer
+    // timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    //   _checkVerificationStatus();
+    // });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _resendVerificationEmail() async {
+    final user = FirebaseAuth.instance.currentUser;
     try {
-      User? user = FirebaseAuth.instance.currentUser;
+      final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        // Get email from Firestore
+        final userDoc = await FirebaseFirestore.instance
             .collection('users')
-            .doc(user.uid) // UID is used as the document ID
+            .doc(user.uid)
             .get();
 
-        if (userDoc.exists) {
-          // Check if the email field exists in the document
-          String? email = userDoc['email'];
+        if (userDoc.exists && userDoc.data()?['email'] != null) {
+          final email = userDoc.data()!['email'] as String;
 
-          if (email != null) {
-            // Update the user's email in Firebase Authentication
+          // If email not set in Auth, set it
+          if (user.email == null) {
             await user.verifyBeforeUpdateEmail(email);
-
-            // Send the verification email
-            await user.sendEmailVerification();
-
-            // Send the verification email
-            await user.sendEmailVerification();
-
-            print("Verification email sent to $email!");
-
-            return isAuth = true;
           } else {
-            print("Email field is missing in the Firestore document.");
-            return isAuth = false;
+            await user.sendEmailVerification();
           }
-        } else {
-          print("UserDoc Doesn't Exists!");
-          return isAuth = false;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Verification email sent!')),
+          );
         }
-      } else {
-        print("No user is currently logged in.");
-        return isAuth = false;
       }
     } catch (e) {
-      print("Error sending verification email: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending verification email: $e')),
+      );
     }
-    return isAuth = false;
+  }
+
+//ToDo - refrase this method
+  Future<void> _checkVerificationStatus() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      String email = widget.Email.toString();
+      //ToDo - Check Email is Verified or not
+      if (user!.emailVerified) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .update({
+            'isEmailVerified': "true",
+          });
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (route) => false, // Clears all previous routes
+          );
+          print("Email verification status updated in Firestore");
+          deleteTemporaryUser(email);
+        } catch (e) {
+          print("Error updating Firestore: $e");
+        }
+      }
+
+      if (user != null) {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: "Temporary@123", // Use the temporary password
+        );
+
+        User? user = userCredential.user;
+        if (user != null && user.emailVerified) {
+          print("Email is verified : ${user.emailVerified.toString()}");
+          //Add UID from Widget
+          String userUid = widget.uid.toString();
+          //Print User UID is :
+          print("User UID is : ${userUid}");
+          await updateEmailVerificationStatus(userUid, true);
+
+          String email = widget.Email.toString();
+          try {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(userUid)
+                .update({
+              'isEmailVerified': "true",
+            });
+            print("Email verification status updated in Firestore");
+            deleteTemporaryUser(email);
+          } catch (e) {
+            print("Error updating Firestore: $e");
+          }
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else {
+          print("Email is not verified : $email");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please verify your email first')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error checking verification status: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+//Update Verification Status
+  Future<void> updateEmailVerificationStatus(
+      String userId, bool isVerified) async {
+    //Copied User isEmailVerified method
+  }
+
+//Delete Temporory User
+  Future<void> deleteTemporaryUser(String email) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: "Temporary@123",
+      );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await user.delete();
+        print("Temporary user deleted");
+      }
+    } catch (e) {
+      print("Error deleting temporary user: $e");
+    }
   }
 
   @override
@@ -97,10 +212,16 @@ class EmailVerification extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              Image.asset(
-                'assets/mail.png',
-                height: 150,
-                width: double.infinity,
+              InkWell(
+                onTap: () async {
+                  // Logout
+                  await FirebaseAuth.instance.signOut();
+                },
+                child: Image.asset(
+                  'assets/mail.png',
+                  height: 150,
+                  width: double.infinity,
+                ),
               ),
 
               //Got it Button
@@ -108,11 +229,11 @@ class EmailVerification extends StatelessWidget {
                 width: 150,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: _checkEmailAuth,
+                  onPressed: _checkVerificationStatus,
                   style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all<Color>(
+                    backgroundColor: MaterialStateProperty.all<Color>(
                         const Color.fromARGB(255, 220, 204, 198)),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                             12.0), // Set your desired radius here
@@ -140,7 +261,7 @@ class EmailVerification extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                        onTap: () {},
+                        onTap: _resendVerificationEmail,
                         child: const Text(
                           "Resend Code",
                           style: TextStyle(

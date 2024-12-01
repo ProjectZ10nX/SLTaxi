@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:mrdrop/screens/MobileVerification.dart';
 import 'package:mrdrop/screens/home_screen.dart';
->>>>>>> Stashed changes
 
-class LanguageSelectionScreen extends StatelessWidget {
+
+class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
 
+  @override
+  State<LanguageSelectionScreen> createState() =>
+      _LanguageSelectionScreenState();
+}
+
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,12 +121,8 @@ class LanguageSelectionScreen extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-<<<<<<< Updated upstream
-          // Handle language selection
-=======
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => HomeScreen()));
->>>>>>> Stashed changes
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(

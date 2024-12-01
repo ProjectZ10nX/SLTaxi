@@ -1,18 +1,20 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mrdrop/screens/home_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:mrdrop/screens/authWrapper.dart';
 import 'package:mrdrop/screens/home_screen.dart';
->>>>>>> Stashed changes
 
-import 'package:mrdrop/screens/home_screen.dart';
-import 'package:mrdrop/screens/MobileVerification.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider:
+  //       AndroidProvider.playIntegrity, // Play Integrity for Android
+  // );
+  await FirebaseAppCheck.instance.activate();
   runApp(const MyApp());
 }
 
@@ -21,17 +23,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      localizationsDelegates: [
+    return MaterialApp(
+      localizationsDelegates: const [
         // AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('en', ''), // English
       ],
       debugShowCheckedModeBanner: false,
-      home: HomePage(), // Set HomePage as the initial screen
+      home: AuthWrapper(),
     );
   }
 }
@@ -58,7 +60,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(builder: (context) => AuthWrapper()),
               );
             },
             child: const Text("Go"),
