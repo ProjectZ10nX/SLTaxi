@@ -10,6 +10,7 @@ class RentalsScreen extends StatefulWidget {
 
 class _RentalsScreenState extends State<RentalsScreen> {
   bool _isSwitched = false;
+  String _selectedVehicle = "Mini";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +76,7 @@ class _RentalsScreenState extends State<RentalsScreen> {
                       decoration: BoxDecoration(
                         color: Colors.lightGreenAccent.shade100,
                       ),
+                      height: 60,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -104,6 +106,18 @@ class _RentalsScreenState extends State<RentalsScreen> {
                   ),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildVehicleCard("Mini", "assets/mini_car_outline.png", 3),
+                _buildVehicleCard("Car", "assets/car_outline.png", 4),
+                _buildVehicleCard("Van", "assets/van_outline.png", 5),
+              ],
             ),
           ),
         ],
@@ -149,6 +163,68 @@ class _RentalsScreenState extends State<RentalsScreen> {
               color: Colors.grey,
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildVehicleCard(String type, String iconPath, int capacity) {
+    bool isSelected = _selectedVehicle == type;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedVehicle = type;
+        });
+      },
+      child: AnimatedContainer(
+        width: 115,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.green.shade100 : Colors.white,
+          border: Border.all(
+              color: isSelected ? Colors.green : Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              iconPath,
+              height: 50,
+              color: isSelected ? Colors.green : Colors.black,
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  type,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? Colors.green : Colors.black,
+                  ),
+                ),
+                SizedBox(width: 6),
+                Icon(
+                  Icons.person,
+                  size: 12,
+                  color: Colors.grey,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  "$capacity",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
