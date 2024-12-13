@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mrdrop/main.dart';
 import 'package:mrdrop/screens/rentals_screen.dart';
 import 'package:mrdrop/screens/rides_screen.dart';
+import 'package:mrdrop/services/AppUser.dart';
+import 'package:mrdrop/services/firebase_service.dart';
 import 'package:mrdrop/widgets/card_widget.dart';
 import 'package:mrdrop/widgets/custom_card_widget.dart';
 import 'package:mrdrop/widgets/custom_card_widget2.dart';
@@ -14,18 +17,36 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+String userName = '';
+String userEmail = '';
+
 class _HomeScreenState extends State<HomeScreen> {
+  Future<void> getCurrentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    String userID = user?.uid ?? "";
+    try {
+      print("UID is : ${user!.uid}");
+      AppUser? currentUser = await FirebaseService.currentUser(user.uid);
+      setState(() {
+        userName = currentUser?.firstname ?? "";
+      });
+    } catch (e) {
+      print("Error is : ${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    getCurrentUser();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0, // Remove the shadow for a cleaner look
-        title: const Text.rich(
+        title: Text.rich(
           TextSpan(
             children: [
               TextSpan(
-                text: "Hi first name,",
+                text: "Hi ${userName}",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -51,6 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: InkWell(
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false, // Remove all previous routes from the stack
+                );
+                setState(() {});
               },
               child: Image.asset(
                 'assets/mrdrop.png',

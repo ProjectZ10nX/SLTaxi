@@ -50,6 +50,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
             "Profile Creation, Email Verification State is : ${userDoc['isEmailVerified']}");
       }
     } catch (e) {
+      setState(() => _isLoading = false);
       print("Error in Profile Creation is : ${e.toString()}");
     }
   }
@@ -161,6 +162,7 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
     setState(() {
       checkEmailVerified(context);
     });
+    setState(() => _isLoading = false);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

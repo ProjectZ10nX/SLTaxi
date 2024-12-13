@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mrdrop/services/AppUser.dart';
 
 class FirebaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -98,5 +99,24 @@ class FirebaseService {
     User? user = _auth.currentUser;
     await user?.reload();
     return user?.emailVerified ?? false;
+  }
+
+  //Get Current User
+  static Future<AppUser?> currentUser(String uid) async {
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (doc.exists && doc.data() != null) {
+        // Parse Firestore document into AppUser
+        return AppUser.fromFirestore(doc.data()!);
+      } else {
+        print("User document not found for UID: $uid");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+      return null;
+    }
   }
 }

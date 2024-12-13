@@ -17,29 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -53,12 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBLjWaM_IiUQaLtnY0oh9U_aW98qIOUebc',
-    appId: '1:636860020540:android:033f38aab2d392663ed039',
-    messagingSenderId: '636860020540',
-    projectId: 'mrdrop-46e9d',
-    databaseURL:
-        'https://mrdrop-46e9d-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'mrdrop-46e9d.firebasestorage.app',
+    apiKey: 'AIzaSyCr7vZZsHH-OWdfm_M1ELPv9Qtpg2QSaZg',
+    appId: '1:414273951892:android:f8f517e9b670ebc034bc81',
+    messagingSenderId: '414273951892',
+    projectId: 'mrdrop-4cd28',
+    storageBucket: 'mrdrop-4cd28.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAQWh4rnNEaIoqzTSQHzbekgbsTcGkUAP4',
+    appId: '1:414273951892:web:8fdecfa3787c0c5234bc81',
+    messagingSenderId: '414273951892',
+    projectId: 'mrdrop-4cd28',
+    authDomain: 'mrdrop-4cd28.firebaseapp.com',
+    storageBucket: 'mrdrop-4cd28.firebasestorage.app',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCBfaYMiy8CZ_Dp6lqa8_Uu4eZt14I8Okw',
+    appId: '1:414273951892:ios:3eae5fbb59e5ea8b34bc81',
+    messagingSenderId: '414273951892',
+    projectId: 'mrdrop-4cd28',
+    storageBucket: 'mrdrop-4cd28.firebasestorage.app',
+    iosBundleId: 'com.example.mrdrop',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCBfaYMiy8CZ_Dp6lqa8_Uu4eZt14I8Okw',
+    appId: '1:414273951892:ios:3eae5fbb59e5ea8b34bc81',
+    messagingSenderId: '414273951892',
+    projectId: 'mrdrop-4cd28',
+    storageBucket: 'mrdrop-4cd28.firebasestorage.app',
+    iosBundleId: 'com.example.mrdrop',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAQWh4rnNEaIoqzTSQHzbekgbsTcGkUAP4',
+    appId: '1:414273951892:web:02f1e2a0edd79b9734bc81',
+    messagingSenderId: '414273951892',
+    projectId: 'mrdrop-4cd28',
+    authDomain: 'mrdrop-4cd28.firebaseapp.com',
+    storageBucket: 'mrdrop-4cd28.firebasestorage.app',
+  );
+
 }
