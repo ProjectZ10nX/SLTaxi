@@ -11,6 +11,18 @@ class RentalsScreen extends StatefulWidget {
 class _RentalsScreenState extends State<RentalsScreen> {
   bool _isSwitched = false;
   String _selectedVehicle = "Mini";
+  String _selectedTab = "Hours";
+  int _selectedIndex = 0;
+
+  final List<Map<String, String>> _pricingOptions = [
+    {"time": "1 Hour", "distance": "5 Km", "price": "LKR 800.00"},
+    {"time": "2 Hours", "distance": "10 Km", "price": "LKR 1,500.00"},
+    {"time": "3 Hours", "distance": "15 Km", "price": "LKR 2,200.00"},
+    {"time": "4 Hours", "distance": "20 Km", "price": "LKR 2,800.00"},
+    {"time": "5 Hours", "distance": "25 Km", "price": "LKR 3,500.00"},
+    {"time": "6 Hours", "distance": "30 Km", "price": "LKR 4,000.00"},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,6 +132,160 @@ class _RentalsScreenState extends State<RentalsScreen> {
               ],
             ),
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildTab("Hours", isSelected: _selectedTab == "Hours"),
+                _buildTab("Days", isSelected: _selectedTab == "Days"),
+                _buildTab("Special", isSelected: _selectedTab == "Special"),
+              ],
+            ),
+          ),
+          const Divider(color: Colors.grey),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _pricingOptions.length,
+              itemBuilder: (context, index) {
+                final option = _pricingOptions[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: _selectedIndex == index
+                          ? Colors.green.shade100
+                          : Colors.white,
+                      border: Border.all(
+                        color: _selectedIndex == index
+                            ? Colors.green
+                            : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time,
+                              color: Colors.grey,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              option["time"]!,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          option["distance"]!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Text(
+                          option["price"]!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                      ),
+                      builder: (BuildContext context) {
+                        return SizedBox(
+                          height: 400,
+                          width: 400,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 30,
+                                  left: 20,
+                                ),
+                                child: const Text(
+                                  'Schedule a rental',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 20,
+                                ),
+                                child: Text(
+                                  'Your ride will arrive on the date and time set blow (SriLanka TimeZone)',
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey.shade800,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  "Schedule",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.greenAccent,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -224,6 +390,24 @@ class _RentalsScreenState extends State<RentalsScreen> {
               ],
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab(String label, {bool isSelected = false}) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedTab = label;
+        });
+      },
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: isSelected ? Colors.green : Colors.black,
         ),
       ),
     );
