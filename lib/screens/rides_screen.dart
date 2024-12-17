@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:mrdrop/screens/home_screen.dart';
-import 'package:mrdrop/screens/rideSelect.dart';
 
 class RidesScreen extends StatefulWidget {
   const RidesScreen({super.key});
@@ -18,12 +18,15 @@ class RidesScreen extends StatefulWidget {
 class _RidesScreenState extends State<RidesScreen> {
   late GoogleMapController mapController;
   final String apiKey = 'AIzaSyC3s_-UH3lsrmhkJk4kGBPpPiHcw4s1EP8';
-
   LatLng? _currentPosition;
   String? _currentAddress;
   String? _destinationAddress;
   LatLng? _destinationPosition;
   LatLng? _stopPosition;
+  LatLng? _pickupLocation;
+  LatLng? _dropLocation;
+  LatLng? _stopLocation;
+  LatLng? _returnLocation;
   bool isOneWaySelected = true;
 
   Map<String, dynamic> _tripDetails = {};
@@ -36,6 +39,63 @@ class _RidesScreenState extends State<RidesScreen> {
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  //Fetch Place Suggestions
+  Future<List<Map<String, dynamic>>> _fetchPlaceSuggestions(
+      String input, String apiKey) async {
+    if (input.isEmpty) {
+      return []; // Return an empty list if the input is empty
+    }
+
+    final String url =
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+        "?input=$input&key=AIzaSyBWUMiCnj-F_YfZcTqswcpu5JQVw5xXcCQ";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Check for errors in the API response
+        if (data['status'] != "OK") {
+          print("Google Places API Error: ${data['status']}");
+          return []; // Return an empty list if there's an error
+        }
+
+        List predictions = data['predictions'];
+        return predictions
+            .map((e) =>
+                {'description': e['description'], 'place_id': e['place_id']})
+            .toList();
+      } else {
+        throw Exception(
+            "Failed to fetch suggestions. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching place suggestions: $e");
+      return [];
+    }
+  }
+
+  //Get Latlang From Place ID
+  Future<LatLng> _getLatLngFromPlaceId(String placeId, String apiKey) async {
+    final String url = "https://maps.googleapis.com/maps/api/place/details/json"
+        "?place_id=$placeId&key=$apiKey";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final location = data['result']['geometry']['location'];
+        return LatLng(location['lat'], location['lng']);
+      } else {
+        throw Exception("Failed to fetch location details");
+      }
+    } catch (e) {
+      print(e);
+      return LatLng(0, 0); // Return default value on failure
+    }
   }
 
   Future<void> _getCurrentLocation() async {
@@ -80,83 +140,10 @@ class _RidesScreenState extends State<RidesScreen> {
     }
   }
 
-  Future<Map<String, dynamic>> _calculateRoute({
-    required LatLng origin,
-    required LatLng destination,
-    LatLng? stopover,
-  }) async {
-    String baseUrl = 'https://maps.googleapis.com/maps/api/directions/json';
-    String waypoints = '';
-
-    if (stopover != null) {
-      waypoints = '&waypoints=${stopover.latitude},${stopover.longitude}';
-    }
-
-    final response = await http
-        .get(Uri.parse('$baseUrl?origin=${origin.latitude},${origin.longitude}'
-            '&destination=${destination.latitude},${destination.longitude}'
-            '$waypoints'
-            '&key=$apiKey'));
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = json.decode(response.body);
-      return {
-        'distance': data['routes'][0]['legs'][0]['distance']['text'],
-        'duration': data['routes'][0]['legs'][0]['duration']['text'],
-      };
-    }
-    return {};
-  }
-
-  Future<void> calculateTrip() async {
-    if (_currentPosition == null || _destinationPosition == null) {
-      return;
-    }
-
-    if (isOneWaySelected) {
-      Map<String, dynamic> details = await _calculateRoute(
-        origin: _currentPosition!,
-        destination: _destinationPosition!,
-      );
-
-      setState(() {
-        _tripDetails = {
-          'type': 'One Way Trip',
-          'distance': details['distance'],
-          'duration': details['duration'],
-        };
-      });
-    } else {
-      // Round trip calculation
-      if (_stopPosition != null) {
-        Map<String, dynamic> firstLeg = await _calculateRoute(
-          origin: _currentPosition!,
-          destination: _stopPosition!,
-        );
-
-        Map<String, dynamic> secondLeg = await _calculateRoute(
-          origin: _stopPosition!,
-          destination: _currentPosition!,
-        );
-
-        setState(() {
-          _tripDetails = {
-            'type': 'Round Trip',
-            'total_distance':
-                '${firstLeg['distance']} + ${secondLeg['distance']}',
-            'total_duration':
-                '${firstLeg['duration']} + ${secondLeg['duration']}',
-          };
-        });
-      }
-    }
-
-    print(_tripDetails);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: Stack(
@@ -224,7 +211,7 @@ class _RidesScreenState extends State<RidesScreen> {
               child: DraggableScrollableSheet(
                 initialChildSize: 0.35,
                 minChildSize: 0.2,
-                maxChildSize: 0.6,
+                maxChildSize: 0.8,
                 builder: (context, scrollController) {
                   return Container(
                     decoration: const BoxDecoration(
@@ -243,25 +230,37 @@ class _RidesScreenState extends State<RidesScreen> {
                         if (isOneWaySelected)
                           Column(
                             children: [
+                              // Pickup Location
                               _buildLocationInput(
                                 'PICKUP',
                                 _currentAddress ?? 'Fetching location...',
                                 Icons.favorite_border,
                                 Colors.blue,
+                                apiKey:
+                                    'AIzaSyBWUMiCnj-F_YfZcTqswcpu5JQVw5xXcCQ',
+                                onLocationSelected: (LatLng location) {
+                                  setState(() {
+                                    _pickupLocation = location;
+                                  });
+                                  print(
+                                      "Pickup Location: ${location.latitude}, ${location.longitude}");
+                                },
                               ),
                               _buildDottedLine(),
+                              // Drop Location
                               _buildLocationInput(
                                 'DROP',
                                 'Where are you going?',
                                 Icons.add,
                                 Colors.orange,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const Rideselect(),
-                                    ),
-                                  );
+                                apiKey:
+                                    'AIzaSyBWUMiCnj-F_YfZcTqswcpu5JQVw5xXcCQ',
+                                onLocationSelected: (LatLng location) {
+                                  setState(() {
+                                    _dropLocation = location;
+                                  });
+                                  print(
+                                      "Drop Location: ${location.latitude}, ${location.longitude}");
                                 },
                               ),
                             ],
@@ -269,30 +268,52 @@ class _RidesScreenState extends State<RidesScreen> {
                         else
                           Column(
                             children: [
+                              // Pickup Location
                               _buildLocationInput(
                                 'PICKUP',
                                 _currentAddress ?? 'Fetching location...',
                                 Icons.favorite_border,
                                 Colors.blue,
+                                apiKey:
+                                    'AIzaSyBWUMiCnj-F_YfZcTqswcpu5JQVw5xXcCQ',
+                                onLocationSelected: (LatLng location) {
+                                  setState(() {
+                                    _pickupLocation = location;
+                                  });
+                                  print(
+                                      "Pickup Location: ${location.latitude}, ${location.longitude}");
+                                },
                               ),
+                              // Stop Location
                               _buildLocationInput(
                                 'STOP',
                                 'Where are you going?',
                                 Icons.abc,
                                 Colors.green,
+                                apiKey:
+                                    'AIzaSyBWUMiCnj-F_YfZcTqswcpu5JQVw5xXcCQ',
+                                onLocationSelected: (LatLng location) {
+                                  setState(() {
+                                    _stopLocation = location;
+                                  });
+                                  print(
+                                      "Stop Location: ${location.latitude}, ${location.longitude}");
+                                },
                               ),
+                              // Return Location
                               _buildLocationInput(
                                 'RETURN',
                                 'Same as pickup',
                                 Icons.add,
                                 Colors.red,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const Rideselect(),
-                                    ),
-                                  );
+                                apiKey:
+                                    'AIzaSyBWUMiCnj-F_YfZcTqswcpu5JQVw5xXcCQ',
+                                onLocationSelected: (LatLng location) {
+                                  setState(() {
+                                    _returnLocation = location;
+                                  });
+                                  print(
+                                      "Return Location: ${location.latitude}, ${location.longitude}");
                                 },
                               ),
                             ],
@@ -373,56 +394,104 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
+  // Widget _buildLocationInput(
+  //   String label,
+  //   String placeholder,
+  //   IconData icon,
+  //   Color labelColor, {
+  //   VoidCallback? onPressed,
+  // }) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+  //     child: Row(
+  //       children: [
+  //         Container(
+  //           width: 80,
+  //           height: 30,
+  //           decoration: BoxDecoration(
+  //             color: Colors.grey.shade200,
+  //             borderRadius: BorderRadius.circular(12),
+  //           ),
+  //           padding: const EdgeInsets.all(4),
+  //           child: Center(
+  //             child: Text(
+  //               label,
+  //               style: const TextStyle(
+  //                 color: Colors.green,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         const SizedBox(width: 20),
+  //         Expanded(
+  //           child: TextField(
+  //             decoration: InputDecoration(
+  //               hintText: placeholder,
+  //               border: InputBorder.none,
+  //               isDense: true,
+  //             ),
+  //             style: const TextStyle(fontSize: 14),
+  //           ),
+  //         ),
+  //         if (label == "STOP")
+  //           const SizedBox.shrink()
+  //         else
+  //           IconButton(
+  //             icon: Icon(
+  //               icon,
+  //               color: const Color.fromARGB(255, 73, 73, 73),
+  //             ),
+  //             onPressed: onPressed,
+  //           ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildLocationInput(
     String label,
     String placeholder,
     IconData icon,
     Color labelColor, {
-    VoidCallback? onPressed,
+    required String apiKey,
+    required Function(LatLng) onLocationSelected,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         children: [
-          Container(
-            width: 80,
-            height: 30,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(4),
-            child: Center(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
+          Icon(
+            icon,
+            color: labelColor,
+            size: 30,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                decoration: InputDecoration(
+                  labelText: label,
+                  hintText: placeholder,
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.all(8.0),
                 ),
               ),
+              suggestionsCallback: (pattern) async {
+                return await _fetchPlaceSuggestions(pattern, apiKey);
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  title: Text(suggestion['description']),
+                );
+              },
+              onSuggestionSelected: (suggestion) async {
+                LatLng location =
+                    await _getLatLngFromPlaceId(suggestion['place_id'], apiKey);
+                onLocationSelected(location);
+              },
             ),
           ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: placeholder,
-                border: InputBorder.none,
-                isDense: true,
-              ),
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-          if (label == "STOP")
-            const SizedBox.shrink()
-          else
-            IconButton(
-              icon: Icon(
-                icon,
-                color: const Color.fromARGB(255, 73, 73, 73),
-              ),
-              onPressed: onPressed,
-            ),
         ],
       ),
     );
@@ -430,30 +499,22 @@ class _RidesScreenState extends State<RidesScreen> {
 
   Widget _buildDottedLine() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SizedBox(
-        height: 1,
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final boxWidth = constraints.constrainWidth();
-            const dashWidth = 5.0;
-            const dashSpace = 3.0;
-            final dashCount = (boxWidth / (dashWidth + dashSpace)).floor();
-
-            return Flex(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              direction: Axis.horizontal,
-              children: List.generate(dashCount, (_) {
-                return const SizedBox(
-                  width: dashWidth,
-                  child: Divider(
-                    color: Colors.black,
-                    thickness: 1,
-                  ),
-                );
-              }),
-            );
-          },
+        height: 40,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(
+            4,
+            (index) => Container(
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -462,46 +523,24 @@ class _RidesScreenState extends State<RidesScreen> {
   Widget _buildBottomButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: 120,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: calculateTrip,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.white,
-                side: const BorderSide(color: Colors.grey),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.watch_later_outlined),
-                  SizedBox(width: 12),
-                  Text(
-                    'Calculate',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        onPressed: () {
+          print("Trip confirmed with details:");
+          print("Pickup Location: $_pickupLocation");
+          print("Drop Location: $_dropLocation");
+          print("Stop Location: $_stopLocation");
+        },
+        child: const Text(
+          'CONFIRM TRIP',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          IconButton(
-            icon: const Icon(
-              Icons.my_location,
-              color: Colors.grey,
-            ),
-            onPressed: _getCurrentLocation,
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -5,9 +5,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.4.0'
-        classpath 'com.android.tools.build:gradle:8.1.1'
     }
 }
 
@@ -17,7 +17,6 @@ allprojects {
         mavenCentral()
     }
 
-    // Add it here, inside allprojects
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
             options.fork = true
@@ -30,10 +29,11 @@ rootProject.buildDir = "../build"
 
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-
-subprojects {
-    project.evaluationDependsOn(":app")
+    
+    // Explicitly check if `namespace` is required, without using `afterEvaluate`
+    if (project.hasProperty('android') && project.android.hasProperty('namespace')) {
+        project.android.namespace = "com.example.${project.name}" // Replace with desired namespace logic
+    }
 }
 
 tasks.register("clean", Delete) {
