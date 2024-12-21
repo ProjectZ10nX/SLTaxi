@@ -500,6 +500,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:mrdrop/screens/home_screen.dart';
+import 'package:mrdrop/screens/instantRideBook.dart';
 // Your existing code...
 
 class RidesScreen extends StatefulWidget {
@@ -516,6 +517,11 @@ class _RidesScreenState extends State<RidesScreen> {
   String? _currentAddress;
   String? _destinationAddress;
   LatLng? _destinationPosition;
+  String? _totalDistance;
+  String? _totalDuration;
+  String? pickupPoint;
+  String? stopPoint;
+  String? dropPoint;
   LatLng? _stopPosition;
   LatLng? _pickupLocation;
   LatLng? _dropLocation;
@@ -633,6 +639,11 @@ class _RidesScreenState extends State<RidesScreen> {
   }
 
   Future<void> _getAddressFromLatLng(LatLng position) async {
+    pickupPoint = "";
+    dropPoint = "";
+    stopPoint = "";
+    _totalDistance = "";
+    _totalDuration = "";
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
@@ -755,6 +766,17 @@ class _RidesScreenState extends State<RidesScreen> {
             'total_distance': '${(totalDistance / 1000).toStringAsFixed(2)} km',
             'total_duration': '${(totalDuration / 60).toStringAsFixed(2)} min',
           };
+
+          pickupPoint = _pickupController.text;
+          stopPoint = _stopController.text;
+          dropPoint = _dropController.text;
+          if (isOneWaySelected) {
+            _totalDistance = distance;
+            _totalDuration = duration;
+          } else {
+            _totalDistance = (totalDistance / 1000).toStringAsFixed(2);
+            _totalDuration = (totalDuration / 60).toStringAsFixed(2);
+          }
         });
         if (data['status'] == 'OK') {
           final route = data['routes'][0];
@@ -769,6 +791,42 @@ class _RidesScreenState extends State<RidesScreen> {
       }
     } else {
       print('Failed to load directions: ${response.statusCode}');
+    }
+  }
+
+//Create a Logic to go to the taxi ride page
+  void taxiRidesPage(String duration, String distance, String pickup,
+      String drop, String stop, BuildContext context) {
+    if (duration != "" && distance != "" && pickup != "" && drop != "") {
+      //ToDo - Call new Page
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => InstantRideBook(
+                    distance: distance,
+                    duration: duration,
+                    drop: drop,
+                    pickup: pickup,
+                    stop: "",
+                  )));
+    } else if (duration != "" &&
+        distance != "" &&
+        pickup != "" &&
+        drop != "" &&
+        stop != "") {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => InstantRideBook(
+                    distance: distance,
+                    duration: duration,
+                    drop: drop,
+                    pickup: pickup,
+                    stop: stop,
+                  )));
+      //ToDo - Call new Page
+    } else {
+      //ToDo - show empty Toast
     }
   }
 
