@@ -136,7 +136,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                     const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
-                        "Please Enter Your Phone Number To Start Using MrDrop Services",
+                        "Please Enter Your Phone Number To Start Using SL Taxi Services",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.w100),
                       ),
@@ -246,7 +246,7 @@ class CornerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFB4E66E) // Light green color
+      ..color = Color.fromARGB(255, 20, 86, 209)
       ..style = PaintingStyle.fill;
 
     final path = Path()

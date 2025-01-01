@@ -168,7 +168,6 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            // Top green corner shape
             Positioned(
               right: 0,
               top: 0,
@@ -178,12 +177,11 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
               ),
             ),
 
-            // Bottom green corner shape
             Positioned(
               left: 0,
               bottom: 0,
               child: Transform.rotate(
-                angle: 3.14159, // 180 degrees in radians
+                angle: 3.14159,
                 child: CustomPaint(
                   size: Size(MediaQuery.of(context).size.width * 0.4,
                       MediaQuery.of(context).size.height * 0.25),
@@ -195,14 +193,13 @@ class _ProfileCreatePageState extends State<ProfileCreatePage> {
             // Main content with keyboard aligned to bottom
             SafeArea(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Aligns content to top and keyboard to bottom
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     children: [
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.08),
-                      // Logo section
+
                       Image.asset(
                         'assets/bgrlogo.png',
                         height: 100,
@@ -400,7 +397,7 @@ class CornerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFB4E66E) // Light green color
+      ..color = const Color.fromARGB(255, 20, 86, 209)
       ..style = PaintingStyle.fill;
 
     final path = Path()

@@ -521,6 +521,7 @@ class _RidesScreenState extends State<RidesScreen> {
   String? _totalDuration;
   String? pickupPoint;
   String? stopPoint;
+  String _selectedVehicle = "Mini";
   String? dropPoint;
   LatLng? _stopPosition;
   LatLng? _pickupLocation;
@@ -1069,22 +1070,51 @@ class _RidesScreenState extends State<RidesScreen> {
                         if (_tripDetails.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Trip Type: ${_tripDetails['type']}'),
-                                if (isOneWaySelected) ...[
-                                  Text('Distance: ${_tripDetails['distance']}'),
-                                  Text('Duration: ${_tripDetails['duration']}'),
-                                ] else ...[
-                                  Text(
-                                      'Total Distance: ${_tripDetails['total_distance']}'),
-                                  Text(
-                                      'Total Duration: ${_tripDetails['total_duration']}'),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildVehicleCard("Tuk", "assets/tuk.png", 2),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  _buildVehicleCard(
+                                      "Mini", "assets/mini_car_outline.png", 3),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  _buildVehicleCard(
+                                      "Car", "assets/car_outline.png", 4),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  _buildVehicleCard(
+                                      "Van", "assets/van_outline.png", 5),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
                                 ],
-                              ],
+                              ),
                             ),
                           ),
+                        Column(
+                          children: [
+                            Text('Trip Type: ${_tripDetails['type']}'),
+                            Text(
+                                'Selected car: ${_selectedVehicle.toString()}'),
+                            if (isOneWaySelected) ...[
+                              Text('Distance: ${_tripDetails['distance']}'),
+                              Text('Duration: ${_tripDetails['duration']}'),
+                            ] else ...[
+                              Text(
+                                  'Total Distance: ${_tripDetails['total_distance']}'),
+                              Text(
+                                  'Total Duration: ${_tripDetails['total_duration']}'),
+                            ],
+                          ],
+                        )
                       ],
                     ),
                   );
@@ -1237,6 +1267,68 @@ class _RidesScreenState extends State<RidesScreen> {
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleCard(String type, String iconPath, int capacity) {
+    bool isSelected = _selectedVehicle == type;
+    double screenWidth = MediaQuery.of(context).size.width;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedVehicle = type;
+        });
+      },
+      child: AnimatedContainer(
+        width: screenWidth / 4,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.green.shade100 : Colors.white,
+          border: Border.all(
+              color: isSelected ? Colors.green : Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              iconPath,
+              height: 50,
+              color: isSelected ? Colors.green : Colors.black,
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  type,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? Colors.green : Colors.black,
+                  ),
+                ),
+                SizedBox(width: 6),
+                Icon(
+                  Icons.person,
+                  size: 12,
+                  color: Colors.grey,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  "$capacity",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );

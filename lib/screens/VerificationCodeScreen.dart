@@ -198,12 +198,11 @@ class _VerificationCodeState extends State<VerificationCode> {
             ),
           ),
 
-          // Bottom green corner shape
           Positioned(
             left: 0,
             bottom: 250,
             child: Transform.rotate(
-              angle: 3.14159, // 180 degrees in radians
+              angle: 3.14159,
               child: CustomPaint(
                 size: Size(MediaQuery.of(context).size.width * 0.4,
                     MediaQuery.of(context).size.height * 0.25),
@@ -381,7 +380,7 @@ class CornerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFB4E66E)
+      ..color = const Color.fromARGB(255, 20, 86, 209)
       ..style = PaintingStyle.fill;
 
     final path = Path()

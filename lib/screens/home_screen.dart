@@ -224,7 +224,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (user != null) {
       String userID = user.uid;
       try {
-        print("UID is: $userID"); // This will only print once.
         AppUser? currentUser = await FirebaseService.currentUser(userID);
         setState(() {
           userName = currentUser?.firstname ?? "";

@@ -16,7 +16,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Top green corner shape
           Positioned(
             right: 0,
             top: 0,
@@ -26,8 +25,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               painter: CornerPainter(),
             ),
           ),
-
-          // Bottom green corner shape
           Positioned(
             left: 0,
             bottom: 300,
@@ -40,7 +37,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               ),
             ),
           ),
-
           SafeArea(
             child: Column(
               children: [
@@ -62,8 +58,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     Card(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                              50), // Adjust the radius as needed
+                          topLeft: Radius.circular(50),
                           topRight: Radius.circular(50),
                         ),
                       ),
@@ -150,7 +145,7 @@ class CornerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFB4E66E) // Light green color
+      ..color = const Color.fromARGB(255, 20, 86, 209)
       ..style = PaintingStyle.fill;
 
     final path = Path()
