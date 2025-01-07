@@ -33,21 +33,22 @@ class CustomCardWidget2 extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        Image.asset(
-                          "assets/Mr.DRop-2.png",
-                          width: 115,
-                          height: 30,
-                        ),
-                        Image.asset(
-                          "assets/Mr.DRop-1.png",
-                          width: 115,
-                          height: 30,
-                        ),
-                        Image.asset(
-                          "assets/Mr.DRop-2.png",
-                          width: 115,
-                          height: 30,
-                        ),
+                        // Image.asset(
+                        //   "assets/
+                        //",
+                        //   width: 115,
+                        //   height: 30,
+                        // ),
+                        // Image.asset(
+                        //   "assets/",
+                        //   width: 115,
+                        //   height: 30,
+                        // ),
+                        // Image.asset(
+                        //   "assets/",
+                        //   width: 115,
+                        //   height: 30,
+                        // ),
                       ],
                     ),
                   ),
